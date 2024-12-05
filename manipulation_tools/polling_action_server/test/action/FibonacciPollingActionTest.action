@@ -1,7 +1,0 @@
-int16 countTo
-int16 failAt
----
-int16 finalNumber
----
-int16 currentIterate
-int16 currentNumber

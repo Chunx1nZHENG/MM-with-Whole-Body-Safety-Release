@@ -1,9 +1,0 @@
-# Goal
-geometry_msgs/PoseStamped poseStamped
----
-# Result
-bool goalReached
----
-# Feedback
-float32 percentComplete
-float32 timeRemaining
