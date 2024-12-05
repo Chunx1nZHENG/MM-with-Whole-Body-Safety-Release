@@ -19,3 +19,6 @@
 [submodule "cmake_clang_tools"]
 	path = cmake_clang_tools
 	url = https://github.com/leggedrobotics/cmake_clang_tools.git
+[submodule "altro-cpp"]
+	path = altro-cpp
+	url = https://github.com/Chunx1nZHENG/altro-cpp.git
