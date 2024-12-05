@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>polling_action_server</name>
+  <version>0.0.0</version>
+  <description>The polling_action_server package</description>
+
+  <maintainer email="fperry@ethz.ch">Perry Franklin</maintainer>
+
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>actionlib</depend>
+  <depend>actionlib_tutorials</depend>
+
+  <depend>genmsg</depend>
+  <depend>actionlib_msgs</depend>
+
+</package>

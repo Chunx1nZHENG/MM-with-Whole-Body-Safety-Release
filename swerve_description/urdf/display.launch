@@ -1,0 +1,11 @@
+<launch>
+  <arg name="model" default="$(find swerve_description)/urdf/whole_robot_with_gripper.xacro" />
+  <arg name="gui" default="true" />
+  <arg name="urdf_path" default="$(find swerve_description)/urdf/whole_robot_with_gripper.xacro" />
+
+  <!-- send robot urdf to param server -->
+  <param name="robot_description" command="xacro '$(arg urdf_path)'" />
+  <node name="joint_state_publisher_gui" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui" />
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+  <node name="rviz" pkg="rviz" type="rviz"  />
+</launch>

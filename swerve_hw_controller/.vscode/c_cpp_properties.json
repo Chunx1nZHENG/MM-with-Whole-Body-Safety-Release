@@ -1,0 +1,36 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/home/daimon/swerve_ws/devel/include/**",
+        "/opt/ros/noetic/include/**",
+        "/home/daimon/swerve_ws/src/hpp-fcl/include/**",
+        "/home/daimon/swerve_ws/src/ocs2/ocs2_core/include/**",
+        "/home/daimon/swerve_ws/src/ocs2/ocs2_ddp/include/**",
+        "/home/daimon/swerve_ws/src/ocs2/ocs2_mpc/include/**",
+        "/home/daimon/swerve_ws/src/ocs2/ocs2_oc/include/**",
+        "/home/daimon/swerve_ws/src/ocs2/ocs2_pinocchio/ocs2_pinocchio_interface/include/**",
+        "/home/daimon/swerve_ws/src/ocs2/ocs2_test_tools/ocs2_qp_solver/include/**",
+        "/home/daimon/swerve_ws/src/ocs2/ocs2_robotic_tools/include/**",
+        "/home/daimon/swerve_ws/src/ocs2/ocs2_ros_interfaces/include/**",
+        "/home/daimon/swerve_ws/src/ocs2/ocs2_thirdparty/include/**",
+        "/home/daimon/swerve_ws/src/swerve_arm/odometry_controller/include/**",
+        "/home/daimon/swerve_ws/src/manipulation_tools/polling_action_server/include/**",
+        "/home/daimon/swerve_ws/src/swerve_arm/swerve_mpc/swerve_mpc/include/**",
+        "/home/daimon/swerve_ws/src/swerve_arm/swerve_mpc/swerve_mpc_ros_control/include/**",
+        "/home/daimon/swerve_ws/src/manipulation_tools/trapezoidal_tracker/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}

@@ -1,0 +1,9 @@
+<library path="lib/libodometry_controller">
+
+  <class name="odometry_controller/OdometryController" type="odometry_controller::OdometryController" base_class_type="controller_interface::ControllerBase">
+    <description>
+      The odometry controller publishes wheel odometry on a topic and via TF.
+    </description>
+  </class>
+
+</library>

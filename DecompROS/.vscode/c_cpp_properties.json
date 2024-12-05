@@ -1,0 +1,61 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/opt/ros/foxy/include/**",
+        "/home/szy/mobile_manipulator_qp/src/DecompROS/DecompUtil/include/**",
+        "/home/szy/mobile_manipulator_qp/src/DecompROS/decomp_ros_utils/include/**",
+        "/home/szy/mobile_manipulator_qp/src/hpp-fcl/include/**",
+        "/home/szy/mobile_manipulator_qp/src/manipulation_tools/polling_action_server/include/**",
+        "/home/szy/mobile_manipulator_qp/src/manipulation_tools/trapezoidal_tracker/include/**",
+        "/home/szy/mobile_manipulator_qp/src/ocs2/ocs2_core/include/**",
+        "/home/szy/mobile_manipulator_qp/src/ocs2/ocs2_ddp/include/**",
+        "/home/szy/mobile_manipulator_qp/src/ocs2/ocs2_frank_wolfe/include/**",
+        "/home/szy/mobile_manipulator_qp/src/ocs2/ocs2_mpc/include/**",
+        "/home/szy/mobile_manipulator_qp/src/ocs2/ocs2_oc/include/**",
+        "/home/szy/mobile_manipulator_qp/src/ocs2/ocs2_ocs2/include/**",
+        "/home/szy/mobile_manipulator_qp/src/ocs2/ocs2_pinocchio/ocs2_centroidal_model/include/**",
+        "/home/szy/mobile_manipulator_qp/src/ocs2/ocs2_pinocchio/ocs2_pinocchio_interface/include/**",
+        "/home/szy/mobile_manipulator_qp/src/ocs2/ocs2_pinocchio/ocs2_self_collision/include/**",
+        "/home/szy/mobile_manipulator_qp/src/ocs2/ocs2_pinocchio/ocs2_self_collision_visualization/include/**",
+        "/home/szy/mobile_manipulator_qp/src/ocs2/ocs2_pinocchio/ocs2_sphere_approximation/include/**",
+        "/home/szy/mobile_manipulator_qp/src/ocs2/ocs2_python_interface/include/**",
+        "/home/szy/mobile_manipulator_qp/src/ocs2/ocs2_raisim/ocs2_legged_robot_raisim/include/**",
+        "/home/szy/mobile_manipulator_qp/src/ocs2/ocs2_raisim/ocs2_raisim_core/include/**",
+        "/home/szy/mobile_manipulator_qp/src/ocs2/ocs2_raisim/ocs2_raisim_ros/include/**",
+        "/home/szy/mobile_manipulator_qp/src/ocs2/ocs2_robotic_examples/ocs2_ballbot/include/**",
+        "/home/szy/mobile_manipulator_qp/src/ocs2/ocs2_robotic_examples/ocs2_ballbot_ros/include/**",
+        "/home/szy/mobile_manipulator_qp/src/ocs2/ocs2_robotic_examples/ocs2_cartpole/include/**",
+        "/home/szy/mobile_manipulator_qp/src/ocs2/ocs2_robotic_examples/ocs2_cartpole_ros/include/**",
+        "/home/szy/mobile_manipulator_qp/src/ocs2/ocs2_robotic_examples/ocs2_double_integrator/include/**",
+        "/home/szy/mobile_manipulator_qp/src/ocs2/ocs2_robotic_examples/ocs2_double_integrator_ros/include/**",
+        "/home/szy/mobile_manipulator_qp/src/ocs2/ocs2_robotic_examples/ocs2_legged_robot/include/**",
+        "/home/szy/mobile_manipulator_qp/src/ocs2/ocs2_robotic_examples/ocs2_legged_robot_ros/include/**",
+        "/home/szy/mobile_manipulator_qp/src/ocs2/ocs2_robotic_examples/ocs2_mobile_manipulator/include/**",
+        "/home/szy/mobile_manipulator_qp/src/ocs2/ocs2_robotic_examples/ocs2_mobile_manipulator_ros/include/**",
+        "/home/szy/mobile_manipulator_qp/src/ocs2/ocs2_robotic_examples/ocs2_quadrotor/include/**",
+        "/home/szy/mobile_manipulator_qp/src/ocs2/ocs2_robotic_examples/ocs2_quadrotor_ros/include/**",
+        "/home/szy/mobile_manipulator_qp/src/ocs2/ocs2_robotic_tools/include/**",
+        "/home/szy/mobile_manipulator_qp/src/ocs2/ocs2_ros_interfaces/include/**",
+        "/home/szy/mobile_manipulator_qp/src/ocs2/ocs2_sqp/hpipm_catkin/include/**",
+        "/home/szy/mobile_manipulator_qp/src/ocs2/ocs2_sqp/ocs2_sqp/include/**",
+        "/home/szy/mobile_manipulator_qp/src/ocs2/ocs2_test_tools/ocs2_qp_solver/include/**",
+        "/home/szy/mobile_manipulator_qp/src/ocs2/ocs2_thirdparty/include/**",
+        "/home/szy/mobile_manipulator_qp/src/qp-control-mobile-manipulater/odometry_controller/include/**",
+        "/home/szy/mobile_manipulator_qp/src/qp-control-mobile-manipulater/swerve_hw_controller/include/**",
+        "/home/szy/mobile_manipulator_qp/src/qp-control-mobile-manipulater/swerve_qp/swerve_qp_ros_control/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}

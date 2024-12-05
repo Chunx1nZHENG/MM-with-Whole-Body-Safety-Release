@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:macro name="ag95_gazebo" params="prefix">
+
+  
+    <!-- Mimic joint plugin -->
+    <gazebo>
+      <plugin filename="libroboticsgroup_upatras_gazebo_mimic_joint_plugin.so" name="${prefix}mimic_dh_robotics_ag95_3">
+        <joint>${prefix}left_outer_knuckle_joint</joint>
+        <mimicJoint>${prefix}right_outer_knuckle_joint</mimicJoint>
+        <!-- <multiplier>1</multiplier>
+        <offset>0.0</offset> -->
+        <robotNamespace>swerve_base</robotNamespace>
+        <maxEffort>5.0</maxEffort>
+        <!-- <hasPID/> -->
+      </plugin>
+    </gazebo>
+
+    <!-- Gazebo Link Properties -->
+    <xacro:macro name="ag95_gazebo_link_properties" params="reference material">
+      <gazebo reference="${reference}">
+        <material>${material}</material>
+        <kp>1000000.0</kp>
+        <kd>1.0</kd>
+        <mu1>1.16</mu1>
+        <mu2>1.16</mu2>
+        <maxVel>0.0</maxVel>
+        <minDepth>0.003</minDepth>
+      </gazebo>
+    </xacro:macro>
+    <xacro:ag95_gazebo_link_properties reference="${prefix}ag95_base_link" material="Gazebo/Grey"/>
+    <xacro:ag95_gazebo_link_properties reference="${prefix}ag95_body" material="Gazebo/Black"/>
+    <xacro:ag95_gazebo_link_properties reference="${prefix}left_outer_knuckle" material="Gazebo/Black"/>
+    <xacro:ag95_gazebo_link_properties reference="${prefix}left_inner_knuckle" material="Gazebo/Black"/>
+    <xacro:ag95_gazebo_link_properties reference="${prefix}left_finger" material="Gazebo/Grey"/>
+    <xacro:ag95_gazebo_link_properties reference="${prefix}right_outer_knuckle" material="Gazebo/Black"/>
+    <xacro:ag95_gazebo_link_properties reference="${prefix}right_inner_knuckle" material="Gazebo/Black"/>
+    <xacro:ag95_gazebo_link_properties reference="${prefix}right_finger" material="Gazebo/Grey"/>
+    
+    <xacro:macro name="ag95_gazebo_joint_properties" params="reference">
+      <gazebo reference="${reference}">
+        <implicitSpringDamper>true</implicitSpringDamper>
+      </gazebo>
+    </xacro:macro>
+    <xacro:ag95_gazebo_joint_properties reference="${prefix}left_outer_knuckle_joint"/>
+    <xacro:ag95_gazebo_joint_properties reference="${prefix}left_finger_joint"/>
+    <xacro:ag95_gazebo_joint_properties reference="${prefix}left_inner_knuckle_joint"/>
+    <xacro:ag95_gazebo_joint_properties reference="${prefix}left_inner_knuckle_to_finger_joint"/>
+    <xacro:ag95_gazebo_joint_properties reference="${prefix}right_outer_knuckle_joint"/>
+    <xacro:ag95_gazebo_joint_properties reference="${prefix}right_finger_joint"/>
+    <xacro:ag95_gazebo_joint_properties reference="${prefix}right_inner_knuckle_joint"/>
+    <xacro:ag95_gazebo_joint_properties reference="${prefix}right_inner_knuckle_to_finger_joint"/>
+
+    
+
+
+  </xacro:macro>
+
+</robot>

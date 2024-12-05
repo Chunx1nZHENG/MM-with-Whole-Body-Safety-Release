@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>swerve_control</name>
+  <version>0.0.0</version>
+  <description>The swerve_control package</description>
+
+  <maintainer email="jzehnder@ethz.ch">Jon Zehnder</maintainer>
+
+  <license>TODO</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <exec_depend>swerve_hardware_interface</exec_depend>
+  <exec_depend>swerve_steering_controller</exec_depend>
+  <exec_depend>strafe_joy</exec_depend>
+  <exec_depend>swerve_description</exec_depend>
+  <exec_depend>rqt_controller_manager</exec_depend>
+  <exec_depend>joint_state_controller</exec_depend>
+  <exec_depend>odometry_controller</exec_depend>
+  <exec_depend>rqt_anydrive_monitor</exec_depend>
+  <exec_depend>joy_manager_msgs</exec_depend>
+  <exec_depend>hbc_driver</exec_depend>
+  <exec_depend>twist_mux</exec_depend>
+  <exec_depend>swerve_qp_ros_control</exec_depend>
+  <exec_depend>robot_localization</exec_depend>
+  <exec_depend>imu_transformer</exec_depend>
+  <exec_depend>imu_complementary_filter</exec_depend>
+  <exec_depend>dh_gripper_driver</exec_depend>
+  <exec_depend>dh_gripper_msgs</exec_depend>
+</package>

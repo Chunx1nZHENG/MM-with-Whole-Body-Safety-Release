@@ -1,0 +1,57 @@
+<launch>
+  <arg name="ns" default="swerve_base" />
+
+  <arg name="mpc" default="true" />
+  <arg name="model" default="$(find swerve_description)/urdf/whole_robot_with_gripper.xacro" />
+  <arg name="gazebo_gui" default="true" />
+
+ 
+
+  <arg name="action_server_config" value="$(find swerve_qp_ros_control)/config/task_space_action_server/swerve_base.yaml" />
+   <!-- The URDF model of the robot -->
+  <arg name="urdf_path" default="$(find swerve_description)/urdf/holonomic_mm_arm.urdf.xacro" />
+  <!-- The task file for the mpc. -->
+  <arg name="taskFile" default="$(find swerve_qp_ros_control)/config/mpc/task_arm.info"/>
+  <!-- The library folder to generate CppAD codegen into -->
+  <arg name="libFolder" default="$(find swerve_qp_ros_control)/auto_generated" />
+  
+  <arg name="model_size_File" default="$(find swerve_qp_ros_control)/config/model_size.info" />
+
+  <param name="/swerve_mpc/robot_description" command="$(find xacro)/xacro $(arg urdf_path)"/>
+  <param name="taskFile" value="$(arg taskFile)" />
+  <param name="libFolder" value="$(arg libFolder)" />
+  <param name="model_size" value="$(arg model_size_File)" />
+
+  <param name="robot_description" command="$(find xacro)/xacro $(arg model)" />
+  
+  <group ns="$(arg ns)">
+      <node name="task_space_action_server" pkg="trapezoidal_tracker" type="task_space_action_server_node" output="screen" launch-prefix="">
+        <rosparam command="load" file="$(arg action_server_config)" />
+      </node>
+
+      <param name="robot_description" command="$(find xacro)/xacro $(find swerve_description)/urdf/whole_robot_with_gripper.xacro" />
+      <rosparam file="$(find swerve_hw_controller)/config/controller.yaml" command="load"/>
+
+      <node name="swerve_hw" pkg="swerve_hw_controller" type="swerve_hw_controller_node" output="screen" respawn="false"/>
+
+      <!-- <node name="load_controller" pkg="controller_manager" type="controller_manager" respawn="false" output="screen" 
+          args="spawn joint_state_controller">
+      </node> -->
+
+      <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen"/>
+  </group>
+
+  <node name="keyboard_driver" 
+          pkg="your_package" 
+          type="keyboard_driver.py" 
+          output="screen">
+  </node>
+
+  <include file="$(find swerve_control)/launch/highlevel_controller.launch">
+    <arg name="ns" value="$(arg ns)" />
+    <arg name="use_radar" value="true" />
+  </include>
+
+  <include file="$(find swerve_control)/launch/opc.launch"/>
+  <include file="$(find dh_gripper_driver)/launch/dh_gripper.launch"/>
+</launch>

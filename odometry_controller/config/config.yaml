@@ -1,0 +1,20 @@
+odometry_controller:
+  type: "odometry_controller/OdometryController"
+  wheel_joints: ["left_front_wheel_joint", "left_back_wheel_joint", "right_front_wheel_joint", "right_back_wheel_joint"]
+  wheel_links: ["wheel_fl", "wheel_rl", "wheel_fr", "wheel_rr"]
+  brake_joints: ["left_front_brake_joint", "left_back_brake_joint", "right_front_brake_joint", "right_back_brake_joint"]
+  brake_links: ["arm_fl", "arm_rl", "arm_fr", "arm_rr"]
+  publish_rate: 50.0               # default: 50
+  pose_covariance_diagonal : [0.001, 0.001, 1.0, 1.0, 1.0, 1.0]
+  twist_covariance_diagonal: [0.001, 0.001, 1.0, 1.0, 1.0, 0.01]
+
+  # Radius of the wheel.
+  wheel_radius : 0.065
+
+  # Base frame_id
+  base_frame_id: base_link #default: base_link
+
+  # Odom frame_id
+  odom_frame_id: odom
+
+  

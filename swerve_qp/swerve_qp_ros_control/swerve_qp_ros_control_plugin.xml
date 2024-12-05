@@ -1,0 +1,6 @@
+<library path="lib/libswerve_qp_ros_control">
+
+  <class name="swerve_qp_ros_control/Swerve_qp_RosControl" type="swerve_qp_ros_control::Swerve_qp_RosControl" base_class_type="controller_interface::ControllerBase">
+  </class>
+
+</library>

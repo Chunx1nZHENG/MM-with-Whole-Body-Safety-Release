@@ -1,0 +1,22 @@
+<launch>
+    <arg name="ns" default="/swerve_base" />
+
+    <arg name="action_server_config" value="$(find swerve_qp_ros_control)/config/task_space_action_server/swerve_base.yaml" />
+
+    <group ns="$(arg ns)">
+      <node name="task_space_action_server" pkg="trapezoidal_tracker" type="task_space_action_server_node" output="screen" launch-prefix="">
+        <rosparam command="load" file="$(arg action_server_config)" />
+      </node>
+
+      <param name="robot_description" command="$(find xacro)/xacro $(find swerve_description)/urdf/whole_robot_with_gripper.xacro" />
+      <rosparam file="$(find swerve_hw_controller)/config/controller.yaml" command="load"/>
+
+      <node name="swerve_hw" pkg="swerve_hw_controller" type="swerve_hw_controller_node" output="screen" respawn="false"/>
+
+      <!-- <node name="load_controller" pkg="controller_manager" type="controller_manager" respawn="false" output="screen" 
+          args="spawn joint_state_controller">
+      </node> -->
+
+      <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen"/>
+    </group>
+</launch>

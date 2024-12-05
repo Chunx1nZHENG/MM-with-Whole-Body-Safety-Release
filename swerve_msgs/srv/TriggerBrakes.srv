@@ -1,0 +1,6 @@
+bool front_right
+bool back_left
+bool back_right
+bool front_left
+---
+bool success

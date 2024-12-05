@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>swerve_description</name>
+  <version>0.0.0</version>
+  <description>The swerve_description package</description>
+
+  <maintainer email="jzehnder@ethz.ch">jonzehnder</maintainer>
+
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <exec_depend>controller_manager</exec_depend>
+  <exec_depend>diff_drive_controller</exec_depend>
+  <exec_depend>gazebo_ros</exec_depend>
+  <exec_depend>gazebo_ros_control</exec_depend>
+  <exec_depend>joint_state_controller</exec_depend>
+  <exec_depend>position_controllers</exec_depend>
+  <exec_depend>robot_state_publisher</exec_depend>
+  <exec_depend>rqt_robot_steering</exec_depend>
+  <exec_depend>rviz</exec_depend>
+  <exec_depend>velodyne_description</exec_depend>
+  <exec_depend>velodyne_gazebo_plugins</exec_depend>
+  <exec_depend>xacro</exec_depend>
+
+</package>

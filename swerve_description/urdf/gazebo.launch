@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+
+<launch>
+  <arg name="paused" default="true" />
+  <arg name="gazebo_gui" default="true" />
+  <arg name="urdf_path" default="$(find swerve_description)/urdf/whole_robot_with_gripper.xacro" />
+
+  <!-- startup simulated world -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" default="worlds/empty.world" />
+    <arg name="paused" value="$(arg paused)" />
+    <arg name="gui" value="$(arg gazebo_gui)" />
+  </include>
+
+  <!-- send robot urdf to param server -->
+  <param name="robot_description" command="xacro '$(arg urdf_path)'" />
+
+  <!-- push robot_description to factory and spawn robot in gazebo at the origin, change x,y,z arguments to spawn in a different position -->
+  <node name="spawn_gazebo_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model robot -x 0 -y 0 -z 0 -unpause"
+    respawn="false" output="screen" />
+
+  <!-- Load joint controller parameters for Gazebo -->
+  <rosparam file="$(find swerve_control)/config/joint_state_controller.yaml" command="load" />
+  <!-- Spawn Gazebo ROS controllers -->
+  <node name="gazebo_controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen"
+    args="joint_state_controller gripper_controller" />
+
+</launch>

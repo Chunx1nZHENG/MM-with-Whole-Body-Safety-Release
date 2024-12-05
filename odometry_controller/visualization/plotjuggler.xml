@@ -1,0 +1,119 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<root>
+ <tabbed_widget name="Main Window" parent="main_window">
+  <Tab tab_name="XY" containers="1">
+   <Container>
+    <DockSplitter sizes="1" orientation="-" count="1">
+     <DockArea name="...">
+      <plot mode="XYPlot" style="Lines">
+       <range right="17.331737" top="4.818174" bottom="-9.892773" left="-17.531192"/>
+       <limitY/>
+       <curve curve_x="/gazebo/model_states/pose.1/position/x" color="#1f77b4" curve_y="/gazebo/model_states/pose.1/position/y" name="Ground Truth"/>
+       <curve curve_x="/swerve/odometry_controller/odom/pose/pose/position/x" color="#d62728" curve_y="/swerve/odometry_controller/odom/pose/pose/position/y" name="Odom"/>
+       <curve curve_x="/swerve/gazebo_odom/pose/pose/position/x" color="#9467bd" curve_y="/swerve/gazebo_odom/pose/pose/position/y" name="Gazebo Odom"/>
+      </plot>
+     </DockArea>
+    </DockSplitter>
+   </Container>
+  </Tab>
+  <Tab tab_name="Pose" containers="1">
+   <Container>
+    <DockSplitter sizes="0.333333;0.333333;0.333333" orientation="-" count="3">
+     <DockArea name="...">
+      <plot mode="TimeSeries" style="Lines">
+       <range right="66.423000" top="4.351068" bottom="-4.770745" left="0.000000"/>
+       <limitY/>
+       <curve color="#1ac938" name="/gazebo/model_states/pose.1/position/x"/>
+       <curve color="#f14cc1" name="/swerve/odometry_controller/odom/pose/pose/position/x"/>
+       <curve color="#bcbd22" name="/swerve/gazebo_odom/pose/pose/position/x"/>
+      </plot>
+     </DockArea>
+     <DockArea name="...">
+      <plot mode="TimeSeries" style="Lines">
+       <range right="66.423000" top="4.818174" bottom="-9.872622" left="0.000000"/>
+       <limitY/>
+       <curve color="#ff7f0e" name="/gazebo/model_states/pose.1/position/y"/>
+       <curve color="#9467bd" name="/swerve/odometry_controller/odom/pose/pose/position/y"/>
+       <curve color="#1f77b4" name="/swerve/gazebo_odom/pose/pose/position/y"/>
+      </plot>
+     </DockArea>
+     <DockArea name="...">
+      <plot mode="TimeSeries" style="Lines">
+       <range right="66.421000" top="9.567896" bottom="-371.031847" left="0.001000"/>
+       <limitY/>
+       <curve color="#17becf" name="/swerve/odometry_controller/odom/pose/pose/orientation/yaw_deg"/>
+       <curve color="#17becf" name="/swerve/gazebo_odom/pose/pose/orientation/yaw_deg"/>
+      </plot>
+     </DockArea>
+    </DockSplitter>
+   </Container>
+  </Tab>
+  <Tab tab_name="Twist" containers="1">
+   <Container>
+    <DockSplitter sizes="0.333333;0.333333;0.333333" orientation="-" count="3">
+     <DockArea name="...">
+      <plot mode="TimeSeries" style="Lines">
+       <range right="66.423000" top="0.529843" bottom="-0.534104" left="0.000000"/>
+       <limitY/>
+       <curve color="#6cbd22" name="/gazebo/model_states/twist.1/linear/x"/>
+       <curve color="#c91a1a" name="/swerve/odometry_controller/odom/twist/twist/linear/x"/>
+       <curve color="#231ac9" name="/swerve/gazebo_odom/twist/twist/linear/x"/>
+       <curve color="#f14cc1" name="/swerve/odometry_controller/odom_twist_world/twist/twist/linear/x"/>
+      </plot>
+     </DockArea>
+     <DockArea name="...">
+      <plot mode="TimeSeries" style="Lines">
+       <range right="66.423000" top="0.525582" bottom="-0.487084" left="0.000000"/>
+       <limitY/>
+       <curve color="#66b41f" name="/gazebo/model_states/twist.1/linear/y"/>
+       <curve color="#ff0e10" name="/swerve/odometry_controller/odom/twist/twist/linear/y"/>
+       <curve color="#0e33ff" name="/swerve/gazebo_odom/twist/twist/linear/y"/>
+       <curve color="#9467bd" name="/swerve/odometry_controller/odom_twist_world/twist/twist/linear/y"/>
+      </plot>
+     </DockArea>
+     <DockArea name="...">
+      <plot mode="TimeSeries" style="Lines">
+       <range right="66.423000" top="0.602792" bottom="-0.243127" left="0.000000"/>
+       <limitY/>
+       <curve color="#80d627" name="/gazebo/model_states/twist.1/angular/z"/>
+       <curve color="#f14e4c" name="/swerve/odometry_controller/odom/twist/twist/angular/z"/>
+       <curve color="#272cd6" name="/swerve/gazebo_odom/twist/twist/angular/z"/>
+       <curve color="#17becf" name="/swerve/odometry_controller/odom_twist_world/twist/twist/angular/z"/>
+      </plot>
+     </DockArea>
+    </DockSplitter>
+   </Container>
+  </Tab>
+  <currentTabIndex index="2"/>
+ </tabbed_widget>
+ <use_relative_time_offset enabled="1"/>
+ <!-- - - - - - - - - - - - - - - -->
+ <!-- - - - - - - - - - - - - - - -->
+ <Plugins>
+  <plugin ID="DataLoad CSV">
+   <default delimiter="0" time_axis=""/>
+  </plugin>
+  <plugin ID="DataLoad ROS bags">
+   <use_header_stamp value="true"/>
+   <use_renaming_rules value="true"/>
+   <discard_large_arrays value="true"/>
+   <max_array_size value="100"/>
+  </plugin>
+  <plugin ID="DataLoad ULog"/>
+  <plugin ID="ROS Topic Subscriber">
+   <use_header_stamp value="false"/>
+   <use_renaming_rules value="true"/>
+   <discard_large_arrays value="true"/>
+   <max_array_size value="100"/>
+  </plugin>
+  <plugin ID="UDP Server"/>
+  <plugin ID="WebSocket Server"/>
+  <plugin ID="CSV Exporter" status="idle"/>
+  <plugin ID="ROS /rosout Visualization" status="idle"/>
+  <plugin ID="ROS Topic Re-Publisher" status="idle"/>
+ </Plugins>
+ <!-- - - - - - - - - - - - - - - -->
+ <!-- - - - - - - - - - - - - - - -->
+ <!-- - - - - - - - - - - - - - - -->
+</root>
+

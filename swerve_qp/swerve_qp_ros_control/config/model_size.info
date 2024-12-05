@@ -1,0 +1,51 @@
+model_size_information
+{
+    base_link
+    {
+        (0,0) 0.762  ; x size
+        (1,0) 0.62  ; y size
+        (2,0) 0.260; z size
+    }
+    x_arm_link
+    {
+        (0,0) 0.093  ; x size
+        (1,0) 0.093  ; y size
+        (2,0) 0.15; z size
+    }
+    shoulder_link
+    {
+        (0,0) 0.093  ; x size
+        (1,0) 0.1  ; y size
+        (2,0) 0.08; z size
+    }
+    bicep_link
+    {
+        (0,0) 0.093  ; x size
+        (1,0) 0.35  ; y size
+        (2,0) 0.11 ; z size
+    }
+    forearm_link
+    {
+        (0,0) 0.093  ; x size
+        (1,0) 0.28  ; y size
+        (2,0) 0.11  ; z size
+    }
+    spherical_wrist_1_link
+    {
+        (0,0) 0.0  ; x size
+        (1,0) 0.0  ; y size
+        (2,0) 0.0  ; z size
+    }
+    spherical_wrist_2_link
+    {
+        (0,0) 0.071  ; x size
+        (1,0) 0.42  ; y size
+        (2,0) 0.11  ; z size
+    }
+    bracelet_link
+    {
+        (0,0) 0.0  ; x size
+        (1,0) 0.0  ; y size
+        (2,0) 0.0  ; z size
+    }
+}

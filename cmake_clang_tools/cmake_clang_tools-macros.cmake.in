@@ -1,0 +1,547 @@
+###
+# Author: Gabriel Hottiger
+# Date:   20.02.2018
+# Links : https://pastebin.com/stcqC0vs
+#
+###
+
+# Static analysis target to collect all static analysis targets.
+if(NOT TARGET run_static_analysis)
+  add_custom_target(run_static_analysis)
+endif(NOT TARGET run_static_analysis)
+
+#########################################
+#####       ADD_CLANG_FORMAT        #####
+#########################################
+macro(ADD_CLANG_FORMAT)
+  set(options WERROR FIX QUIET)
+  set(oneValueArgs CONFIG_FILE)
+  set(multiValueArgs SOURCES TARGETS)
+  cmake_parse_arguments(ADD_CLANG_FORMAT "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
+
+  # Check unparsed args
+  if(ADD_CLANG_FORMAT_UNPARSED_ARGUMENTS)
+    message(FATAL_ERROR "[cmake_clang_tools::ADD_CLANG_FORMAT] Called with unrecognized arguments (${ADD_CLANG_FORMAT_UNPARSED_ARGUMENTS})!")
+  endif(ADD_CLANG_FORMAT_UNPARSED_ARGUMENTS)
+
+  # Use default .clang-format file if none set
+  if (NOT ADD_CLANG_FORMAT_CONFIG_FILE)
+    set(ADD_CLANG_FORMAT_CONFIG_FILE @CONFIG_FILE_DIR@/.clang-format)
+  endif(NOT ADD_CLANG_FORMAT_CONFIG_FILE)
+
+  # Clang format options
+  set(CLANG_FORMAT_OPTIONS "")
+
+  # Add inplace fix if option enabled
+  if (ADD_CLANG_FORMAT_FIX AND NOT CLANG_TOOLS_BS)
+    set(CLANG_FORMAT_OPTIONS ${CLANG_FORMAT_OPTIONS} "--fix")
+  endif(ADD_CLANG_FORMAT_FIX AND NOT CLANG_TOOLS_BS)
+
+  # Add warnings as errors if option enabled
+  list (FIND CMAKE_CXX_FLAGS "-Werror" CLANG_FORMAT_WERROR_INDEX)
+  if (ADD_CLANG_FORMAT_WERROR OR ${CLANG_FORMAT_WERROR_INDEX} GREATER -1 OR CLANG_TOOLS_BS)
+    set(CLANG_FORMAT_OPTIONS ${CLANG_FORMAT_OPTIONS} "--error")
+  endif(ADD_CLANG_FORMAT_WERROR OR ${CLANG_FORMAT_WERROR_INDEX} GREATER -1 OR CLANG_TOOLS_BS)
+
+  # Print to stderr if quiet is not set
+  if (NOT ADD_CLANG_FORMAT_QUIET)
+    set(CLANG_FORMAT_OPTIONS ${CLANG_FORMAT_OPTIONS} "--verbose")
+  endif(NOT ADD_CLANG_FORMAT_QUIET)
+
+  find_program(CLANG_FORMAT NAMES "clang-format-12" "clang-format-11" "clang-format-10" "clang-format-9" "clang-format-8" "clang-format-7" "clang-format")
+  if(CLANG_FORMAT)
+    message(STATUS "Running ${CLANG_FORMAT}:")
+    message(STATUS "Files: " ${ADD_CLANG_FORMAT_SOURCES})
+    message(STATUS "Config: " ${ADD_CLANG_FORMAT_CONFIG_FILE})
+    message(STATUS "Options: " ${CLANG_FORMAT_OPTIONS})
+
+    # Make a directory for build of clang_format
+    set(CLANG_FORMAT_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/clang_format")
+    if(NOT EXISTS "${CLANG_FORMAT_BINARY_DIR}")
+      file(MAKE_DIRECTORY "${CLANG_FORMAT_BINARY_DIR}")
+    endif(NOT EXISTS "${CLANG_FORMAT_BINARY_DIR}")
+
+    # Create config.yaml in /home/user/.config/cmake_clang_tools if non existing
+    set(CLANG_FORMAT_SETTINGS_DIR "$ENV{HOME}/.config/cmake_clang_tools")
+    if(NOT EXISTS "${CLANG_FORMAT_SETTINGS_DIR}")
+      file(MAKE_DIRECTORY "${CLANG_FORMAT_SETTINGS_DIR}")
+    endif(NOT EXISTS "${CLANG_FORMAT_SETTINGS_DIR}")
+    set(CLANG_FORMAT_SETTINGS "${CLANG_FORMAT_SETTINGS_DIR}/config.yaml")
+    if(NOT EXISTS "${CLANG_FORMAT_SETTINGS}")
+      file(COPY @CONFIG_FILE_DIR@/config.yaml DESTINATION ${CLANG_FORMAT_SETTINGS_DIR})
+    endif(NOT EXISTS "${CLANG_FORMAT_SETTINGS}")
+
+    # Create config.yaml copy in build space
+    set(CLANG_FORMAT_SETTINGS_CACHED "${CLANG_FORMAT_BINARY_DIR}/config.yaml")
+    if(NOT EXISTS "${CLANG_FORMAT_SETTINGS_CACHED}")
+      file(COPY "${CLANG_FORMAT_SETTINGS}" DESTINATION ${CLANG_FORMAT_BINARY_DIR})
+      endif(NOT EXISTS "${CLANG_FORMAT_SETTINGS_CACHED}")
+
+    # Create trigger if config changed
+    set(CLANG_FORMAT_SETTINGS_CHANGED "${CLANG_FORMAT_BINARY_DIR}/SETTINGS_CHANGED")
+    if(NOT EXISTS "${CLANG_FORMAT_SETTINGS_CHANGED}")
+      file(WRITE "${CLANG_FORMAT_SETTINGS_CHANGED}")
+    endif(NOT EXISTS "${CLANG_FORMAT_SETTINGS_CHANGED}")
+
+    # Check config for changes
+    set(CLANG_FORMAT_SETTINGS_CHECK_STAMP "${CLANG_FORMAT_BINARY_DIR}/settings_check.stamp")
+    add_custom_command(
+        OUTPUT "${CLANG_FORMAT_SETTINGS_CHECK_STAMP}"
+        BYPRODUCTS "${CLANG_FORMAT_SETTINGS_CHANGED}"
+        COMMAND @PYTHON_SCRIPTS_DIR@/check_settings_change.py
+              -project-name=${PROJECT_NAME}
+              -settings-file="${CLANG_FORMAT_SETTINGS}"
+              -settings-file-cached="${CLANG_FORMAT_SETTINGS_CACHED}"
+              -trigger-file="${CLANG_FORMAT_SETTINGS_CHANGED}"
+              -tool-name="clang_format"
+        COMMAND cmake -E touch "${CLANG_FORMAT_SETTINGS_CHECK_STAMP}"
+        DEPENDS "${CLANG_FORMAT_SETTINGS}"
+    )
+    set(CLANG_FORMAT_SETTINGS_CHANGED_TARGET "${PROJECT_NAME}_clang_format_settings")
+    add_custom_target(
+      ${CLANG_FORMAT_SETTINGS_CHANGED_TARGET}
+      SOURCES "${CLANG_FORMAT_SETTINGS_CHECK_STAMP}"
+    )
+
+    set(CLANG_FORMAT_PROXIES "")
+    foreach (CLANG_FORMAT_SOURCE ${ADD_CLANG_FORMAT_SOURCES})
+      if (NOT TARGET ${CLANG_FORMAT_SOURCE})
+          get_filename_component(CLANG_FORMAT_SOURCE_FILE "${CLANG_FORMAT_SOURCE}" NAME)
+          get_source_file_property(CLANG_FORMAT_SOURCE_LOCATION "${CLANG_FORMAT_SOURCE}" LOCATION)
+          set(CLANG_FORMAT_TRIGGER_TARGET_LONG "${PROJECT_NAME}${CLANG_FORMAT_SOURCE_LOCATION}_format-trigger")
+          string(REPLACE "/" "-" CLANG_FORMAT_TRIGGER_TARGET_LONG ${CLANG_FORMAT_TRIGGER_TARGET_LONG})
+          string(LENGTH ${CLANG_FORMAT_TRIGGER_TARGET_LONG} CLANG_FORMAT_TRIGGER_TARGET_LONG_LENGTH)
+          math(EXPR CLANG_FORMAT_SOURCE_TARGET_START ${CLANG_FORMAT_TRIGGER_TARGET_LONG_LENGTH}-127)
+          if(CLANG_FORMAT_SOURCE_TARGET_START LESS 0)
+            set(CLANG_FORMAT_SOURCE_TARGET_START 0)
+          endif(CLANG_FORMAT_SOURCE_TARGET_START LESS 0)
+
+          string(SUBSTRING ${CLANG_FORMAT_TRIGGER_TARGET_LONG} ${CLANG_FORMAT_SOURCE_TARGET_START} -1 CLANG_FORMAT_TRIGGER_TARGET)
+          set(CLANG_FORMAT_TRIGGER_STAMP "${CLANG_FORMAT_BINARY_DIR}/${CLANG_FORMAT_TRIGGER_TARGET}.stamp")
+          set(CLANG_FORMAT_TRIGGER "${CLANG_FORMAT_BINARY_DIR}/${CLANG_FORMAT_TRIGGER_TARGET}")
+          if(NOT EXISTS "${CLANG_FORMAT_TRIGGER}")
+            file(WRITE "${CLANG_FORMAT_TRIGGER}")
+          endif(NOT EXISTS "${CLANG_FORMAT_TRIGGER}")
+
+          add_custom_command(
+              OUTPUT "${CLANG_FORMAT_TRIGGER_STAMP}"
+              BYPRODUCTS "${CLANG_FORMAT_TRIGGER}"
+              COMMAND @PYTHON_SCRIPTS_DIR@/run_cmake_clang_tools_trigger.py
+                  -project-name=${PROJECT_NAME}
+                  -settings-file="${CLANG_FORMAT_SETTINGS}"
+                  -trigger-file="${CLANG_FORMAT_TRIGGER}"
+                  -tool-name="clang_format"
+              COMMAND cmake -E touch "${CLANG_FORMAT_TRIGGER_STAMP}"
+              DEPENDS "${CLANG_FORMAT_SETTINGS_CHANGED_TARGET}" "${CLANG_FORMAT_SETTINGS_CHANGED}"
+                      "${CLANG_FORMAT_SOURCE}" "${ADD_CLANG_FORMAT_CONFIG_FILE}"
+          )
+
+          add_custom_target(
+            "${CLANG_FORMAT_TRIGGER_TARGET}"
+            SOURCES "${CLANG_FORMAT_TRIGGER_STAMP}"
+          )
+
+          set(CLANG_FORMAT_PROXY "${CLANG_FORMAT_BINARY_DIR}/${CLANG_FORMAT_TRIGGER_TARGET}.proxy")
+
+          add_custom_command(
+              OUTPUT "${CLANG_FORMAT_PROXY}"
+              COMMAND @PYTHON_SCRIPTS_DIR@/clang_format_check.py
+                        -clang-format-executable=${CLANG_FORMAT}
+                        -config-file=${ADD_CLANG_FORMAT_CONFIG_FILE}
+                        -trigger-file="${CLANG_FORMAT_TRIGGER}"
+                        ${CLANG_FORMAT_OPTIONS}
+                        ${CLANG_FORMAT_SOURCE}
+              COMMAND cmake -E touch "${CLANG_FORMAT_PROXY}"
+              COMMAND cmake -E echo "Run clang-format for ${CLANG_FORMAT_SOURCE_FILE}"
+              DEPENDS "${CLANG_FORMAT_TRIGGER_TARGET}" "${CLANG_FORMAT_TRIGGER}"
+          )
+
+          list(APPEND CLANG_FORMAT_PROXIES "${CLANG_FORMAT_PROXY}")
+      endif ()
+    endforeach ()
+
+    if (CLANG_FORMAT_PROXIES)
+
+        if(ADD_CLANG_FORMAT_TARGETS)
+          add_custom_target(${PROJECT_NAME}_clang-format
+              SOURCES ${CLANG_FORMAT_PROXIES}
+              COMMENT "Clang-Format for project ${PROJECT_NAME}"
+          )
+          foreach (PROJECT_TARGET ${ADD_CLANG_FORMAT_TARGETS})
+            if(TARGET ${PROJECT_TARGET})
+              add_dependencies(${PROJECT_TARGET} ${PROJECT_NAME}_clang-format)
+            else()
+              message(WARNING "[cmake_clang_tools] Target ${PROJECT_TARGET} does not exists. Not adding dependency.")
+            endif()
+          endforeach(PROJECT_TARGET)
+        else(ADD_CLANG_FORMAT_TARGETS)
+          add_custom_target(${PROJECT_NAME}_clang-format ALL
+              SOURCES ${CLANG_FORMAT_PROXIES}
+              COMMENT "Clang-Format for project ${PROJECT_NAME}"
+          )
+        endif(ADD_CLANG_FORMAT_TARGETS)
+
+    endif (CLANG_FORMAT_PROXIES)
+
+  else(CLANG_FORMAT)
+    message(WARNING "Could not find clang-format!")
+  endif(CLANG_FORMAT)
+endmacro(ADD_CLANG_FORMAT)
+
+#########################################
+#####        ADD_CLANG_TIDY         #####
+#########################################
+macro(ADD_CLANG_TIDY)
+  set(options WERROR FIX QUIET ATTACH_TO_ALL)
+  set(oneValueArgs CONFIG_FILE HEADER_FILTER BUILD_DIR)
+  set(multiValueArgs SOURCES TARGETS HEADERS HEADER_DIRS HEADER_EXCLUDE_DIRS)
+  cmake_parse_arguments(ADD_CLANG_TIDY "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
+
+  # Check unparsed args
+  if(ADD_CLANG_TIDY_UNPARSED_ARGUMENTS)
+    message(FATAL_ERROR "[cmake_clang_tools::ADD_CLANG_TIDY] Called with unrecognized arguments (${ADD_CLANG_TIDY_UNPARSED_ARGUMENTS})!")
+  endif(ADD_CLANG_TIDY_UNPARSED_ARGUMENTS)
+
+  # Use default .clang-tidy file if none set
+  if (NOT ADD_CLANG_TIDY_CONFIG_FILE)
+    set(ADD_CLANG_TIDY_CONFIG_FILE @CONFIG_FILE_DIR@/.clang-tidy)
+  endif(NOT ADD_CLANG_TIDY_CONFIG_FILE)
+
+  # Use current binary dir if no build directory is set
+  if (NOT ADD_CLANG_TIDY_BUILD_DIR)
+    set(ADD_CLANG_TIDY_BUILD_DIR ${CMAKE_CURRENT_BINARY_DIR})
+  endif(NOT ADD_CLANG_TIDY_BUILD_DIR)
+
+  # Clang tidy options
+  set(ADD_CLANG_TIDY_OPTIONS "")
+
+  # Add inplace fix if option enabled
+  if (ADD_CLANG_TIDY_FIX AND NOT CLANG_TOOLS_BS)
+    set(ADD_CLANG_TIDY_OPTIONS ${ADD_CLANG_TIDY_OPTIONS} "--fix")
+  endif(ADD_CLANG_TIDY_FIX AND NOT CLANG_TOOLS_BS)
+
+  # Add warnings as errors if option enabled
+  list (FIND CMAKE_CXX_FLAGS "-Werror" CLANG_TIDY_WERROR_INDEX)
+  if (ADD_CLANG_TIDY_WERROR OR ${CLANG_TIDY_WERROR_INDEX} GREATER -1)
+    set(ADD_CLANG_TIDY_OPTIONS ${ADD_CLANG_TIDY_OPTIONS} "--error")
+  endif(ADD_CLANG_TIDY_WERROR OR ${CLANG_TIDY_WERROR_INDEX} GREATER -1)
+
+  # Print to stderr if quiet is not set
+  if (NOT ADD_CLANG_TIDY_QUIET)
+    set(ADD_CLANG_TIDY_OPTIONS ${ADD_CLANG_TIDY_OPTIONS} "--verbose")
+  endif(NOT ADD_CLANG_TIDY_QUIET)
+
+  # Assert misuse of header dirs
+  if (ADD_CLANG_TIDY_HEADER_EXCLUDE_DIRS AND NOT ADD_CLANG_TIDY_HEADER_DIRS)
+    message(WARNING "CLANG-TIDY: If HEADER_EXCLUDE_DIRS are set, HEADER_DIRS must be set too! Using HEADER_FILTER instead.")
+  endif(ADD_CLANG_TIDY_HEADER_EXCLUDE_DIRS AND NOT ADD_CLANG_TIDY_HEADER_DIRS)
+
+  # Assert misuse of header filter
+  if (ADD_CLANG_TIDY_HEADER_FILTER AND ADD_CLANG_TIDY_HEADER_DIRS)
+    message(WARNING "CLANG-TIDY: If HEADER_DIRS is set, HEADER_FILTER is ignored!")
+  endif(ADD_CLANG_TIDY_HEADER_FILTER AND ADD_CLANG_TIDY_HEADER_DIRS)
+
+  find_program(CLANG_TIDY NAMES "clang-tidy-12" "clang-tidy-11" "clang-tidy-10" "clang-tidy-9" "clang-tidy-8" "clang-tidy-7" "clang-tidy")
+  if(CLANG_TIDY)
+    message(STATUS "Running ${CLANG_TIDY}:")
+    message(STATUS "Files: " ${ADD_CLANG_TIDY_SOURCES})
+    message(STATUS "Config: " ${ADD_CLANG_TIDY_CONFIG_FILE})
+    message(STATUS "Build directory: " ${ADD_CLANG_TIDY_BUILD_DIR})
+    message(STATUS "Header filter: " ${ADD_CLANG_TIDY_HEADER_FILTER})
+    message(STATUS "Header dirs: " ${ADD_CLANG_TIDY_HEADER_DIRS})
+    message(STATUS "Exclude header dirs: " ${ADD_CLANG_TIDY_HEADER_EXCLUDE_DIRS})
+    message(STATUS "Options: " ${ADD_CLANG_TIDY_OPTIONS})
+
+    # Make a directory for build of clang_tidy
+    set(CLANG_TIDY_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/clang_tidy")
+    if(NOT EXISTS "${CLANG_TIDY_BINARY_DIR}")
+      file(MAKE_DIRECTORY "${CLANG_TIDY_BINARY_DIR}")
+    endif(NOT EXISTS "${CLANG_TIDY_BINARY_DIR}")
+
+    # Create config.yaml in /home/user/.config/cmake_clang_tools if non existing
+    set(CLANG_TIDY_SETTINGS_DIR "$ENV{HOME}/.config/cmake_clang_tools")
+    if(NOT EXISTS "${CLANG_TIDY_SETTINGS_DIR}")
+      file(MAKE_DIRECTORY "${CLANG_TIDY_SETTINGS_DIR}")
+    endif(NOT EXISTS "${CLANG_TIDY_SETTINGS_DIR}")
+    set(CLANG_TIDY_SETTINGS "${CLANG_TIDY_SETTINGS_DIR}/config.yaml")
+    if(NOT EXISTS "${CLANG_TIDY_SETTINGS}")
+      file(COPY @CONFIG_FILE_DIR@/config.yaml DESTINATION ${CLANG_TIDY_SETTINGS_DIR})
+    endif(NOT EXISTS "${CLANG_TIDY_SETTINGS}")
+
+    # Create config.yaml copy in build space
+    set(CLANG_TIDY_SETTINGS_CACHED "${CLANG_TIDY_BINARY_DIR}/config.yaml")
+    if(NOT EXISTS "${CLANG_TIDY_SETTINGS_CACHED}")
+      file(COPY "${CLANG_TIDY_SETTINGS}" DESTINATION ${CLANG_TIDY_BINARY_DIR})
+    endif(NOT EXISTS "${CLANG_TIDY_SETTINGS_CACHED}")
+
+    # Create trigger if config changed
+    set(CLANG_TIDY_SETTINGS_CHANGED "${CLANG_TIDY_BINARY_DIR}/SETTINGS_CHANGED")
+    if(NOT EXISTS "${CLANG_TIDY_SETTINGS_CHANGED}")
+      file(WRITE "${CLANG_TIDY_SETTINGS_CHANGED}")
+    endif(NOT EXISTS "${CLANG_TIDY_SETTINGS_CHANGED}")
+
+    # Check config for changes
+    set(CLANG_TIDY_SETTINGS_CHECK_STAMP "${CLANG_TIDY_BINARY_DIR}/settings_check.stamp")
+    add_custom_command(
+        OUTPUT "${CLANG_TIDY_SETTINGS_CHECK_STAMP}"
+        BYPRODUCTS "${CLANG_TIDY_SETTINGS_CHANGED}"
+        COMMAND @PYTHON_SCRIPTS_DIR@/check_settings_change.py
+              -project-name=${PROJECT_NAME}
+              -settings-file="${CLANG_TIDY_SETTINGS}"
+              -settings-file-cached="${CLANG_TIDY_SETTINGS_CACHED}"
+              -trigger-file="${CLANG_TIDY_SETTINGS_CHANGED}"
+              -tool-name="clang_tidy"
+        COMMAND cmake -E touch "${CLANG_TIDY_SETTINGS_CHECK_STAMP}"
+        DEPENDS "${CLANG_TIDY_SETTINGS}"
+    )
+    set(CLANG_TIDY_SETTINGS_CHANGED_TARGET "${PROJECT_NAME}_clang_tidy_settings")
+    add_custom_target(
+      ${CLANG_TIDY_SETTINGS_CHANGED_TARGET}
+      SOURCES "${CLANG_TIDY_SETTINGS_CHECK_STAMP}"
+    )
+
+    set(CLANG_TIDY_PROXIES "")
+    foreach (CLANG_TIDY_SOURCE ${ADD_CLANG_TIDY_SOURCES})
+      if (NOT TARGET ${CLANG_TIDY_SOURCE})
+          get_filename_component(CLANG_TIDY_SOURCE_FILE "${CLANG_TIDY_SOURCE}" NAME)
+          get_source_file_property(CLANG_TIDY_SOURCE_LOCATION "${CLANG_TIDY_SOURCE}" LOCATION)
+
+          set(CLANG_TIDY_TRIGGER_TARGET_LONG "${PROJECT_NAME}${CLANG_TIDY_SOURCE_LOCATION}_tidy-trigger")
+          string(REPLACE "/" "-" CLANG_TIDY_TRIGGER_TARGET_LONG ${CLANG_TIDY_TRIGGER_TARGET_LONG})
+          string(LENGTH ${CLANG_TIDY_TRIGGER_TARGET_LONG} CLANG_TIDY_TRIGGER_TARGET_LONG_LENGTH)
+          math(EXPR CLANG_TIDY_SOURCE_TARGET_START ${CLANG_TIDY_TRIGGER_TARGET_LONG_LENGTH}-127)
+          if(CLANG_TIDY_SOURCE_TARGET_START LESS 0)
+            set(CLANG_TIDY_SOURCE_TARGET_START 0)
+          endif(CLANG_TIDY_SOURCE_TARGET_START LESS 0)
+
+          string(SUBSTRING ${CLANG_TIDY_TRIGGER_TARGET_LONG} ${CLANG_TIDY_SOURCE_TARGET_START} -1 CLANG_TIDY_TRIGGER_TARGET)
+          set(CLANG_TIDY_TRIGGER_STAMP "${CLANG_TIDY_BINARY_DIR}/${CLANG_TIDY_TRIGGER_TARGET}.stamp")
+          set(CLANG_TIDY_TRIGGER "${CLANG_TIDY_BINARY_DIR}/${CLANG_TIDY_TRIGGER_TARGET}")
+          if(NOT EXISTS "${CLANG_TIDY_TRIGGER}")
+            file(WRITE "${CLANG_TIDY_TRIGGER}")
+          endif(NOT EXISTS "${CLANG_TIDY_TRIGGER}")
+
+          add_custom_command(
+              OUTPUT "${CLANG_TIDY_TRIGGER_STAMP}"
+              BYPRODUCTS "${CLANG_TIDY_TRIGGER}"
+              COMMAND @PYTHON_SCRIPTS_DIR@/run_cmake_clang_tools_trigger.py
+                  -project-name=${PROJECT_NAME}
+                  -settings-file="${CLANG_TIDY_SETTINGS}"
+                  -trigger-file="${CLANG_TIDY_TRIGGER}"
+                  -tool-name="clang_tidy"
+              COMMAND cmake -E touch "${CLANG_TIDY_TRIGGER_STAMP}"
+              DEPENDS "${CLANG_TIDY_SETTINGS_CHANGED_TARGET}" "${CLANG_TIDY_SETTINGS_CHANGED}"
+                      "${CLANG_TIDY_SOURCE}" "${ADD_CLANG_TIDY_HEADERS}" "${ADD_CLANG_TIDY_CONFIG_FILE}"
+          )
+
+          add_custom_target(
+            "${CLANG_TIDY_TRIGGER_TARGET}"
+            SOURCES "${CLANG_TIDY_TRIGGER_STAMP}"
+          )
+
+          set(CLANG_TIDY_PROXY "${CLANG_TIDY_BINARY_DIR}/${CLANG_TIDY_TRIGGER_TARGET}.proxy")
+
+          add_custom_command(
+              OUTPUT "${CLANG_TIDY_PROXY}"
+              COMMAND @PYTHON_SCRIPTS_DIR@/clang_tidy_check.py
+                      -clang-tidy-executable=${CLANG_TIDY}
+                      -build-directory=${ADD_CLANG_TIDY_BUILD_DIR}
+                      -trigger-file="${CLANG_TIDY_TRIGGER}"
+                      -config-file=${ADD_CLANG_TIDY_CONFIG_FILE}
+                      -header-filter=${ADD_CLANG_TIDY_HEADER_FILTER}
+                      -header-dirs="${ADD_CLANG_TIDY_HEADER_DIRS}"
+                      -exclude-header-dirs="${ADD_CLANG_TIDY_HEADER_EXCLUDE_DIRS}"
+                      ${ADD_CLANG_TIDY_OPTIONS}
+                      ${CLANG_TIDY_SOURCE}
+              COMMAND cmake -E touch "${CLANG_TIDY_PROXY}"
+              DEPENDS "${CLANG_TIDY_TRIGGER_TARGET}" "${CLANG_TIDY_TRIGGER}"
+          )
+
+          list(APPEND CLANG_TIDY_PROXIES "${CLANG_TIDY_PROXY}")
+      endif ()
+    endforeach ()
+
+    if (CLANG_TIDY_PROXIES)
+        if(ADD_CLANG_TIDY_ATTACH_TO_ALL)
+          add_custom_target(${PROJECT_NAME}_clang-tidy ALL
+              SOURCES ${CLANG_TIDY_PROXIES}
+              COMMENT "Clang-Tidy for project ${PROJECT_NAME}"
+          )
+        else()
+          add_custom_target(${PROJECT_NAME}_clang-tidy
+              SOURCES ${CLANG_TIDY_PROXIES}
+              COMMENT "Clang-Tidy for project ${PROJECT_NAME}"
+          )
+          add_dependencies(run_static_analysis ${PROJECT_NAME}_clang-tidy)
+        endif()
+
+        if(ADD_CLANG_TIDY_TARGETS)
+          foreach (PROJECT_TARGET ${ADD_CLANG_TIDY_TARGETS})
+            if(TARGET ${PROJECT_TARGET})
+              add_dependencies(${PROJECT_NAME}_clang-tidy ${PROJECT_TARGET})
+            else()
+              message(WARNING "[cmake_clang_tools] Target ${PROJECT_TARGET} does not exists. Not adding dependency.")
+            endif()
+          endforeach(PROJECT_TARGET)
+        endif(ADD_CLANG_TIDY_TARGETS)
+    endif (CLANG_TIDY_PROXIES)
+
+  else(CLANG_TIDY)
+    message(WARNING "Could not find clang-tidy!")
+  endif(CLANG_TIDY)
+endmacro(ADD_CLANG_TIDY)
+
+#########################################
+#####       ADD_CLANG_TOOLING       #####
+#########################################
+# Add clang tooling to your target
+macro(ADD_CLANG_TOOLING)
+  set(options CT_WERROR CT_FIX CT_QUIET CT_ATTACH_TO_ALL CF_WERROR CF_FIX CF_QUIET DISABLE_CLANG_FORMAT DISABLE_CLANG_TIDY)
+  set(oneValueArgs TARGET CT_CONFIG_FILE CF_CONFIG_FILE CT_HEADER_FILTER CT_BUILD_DIR)
+  set(multiValueArgs TARGETS SOURCE_DIRS CT_HEADER_DIRS CT_HEADER_EXCLUDE_DIRS)
+  cmake_parse_arguments(ADD_CLANG_TOOLING "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
+
+  # Check unparsed args
+  if(ADD_CLANG_TOOLING_UNPARSED_ARGUMENTS)
+    message(FATAL_ERROR "[cmake_clang_tools::ADD_CLANG_TOOLING] Called with unrecognized arguments (${ADD_CLANG_TOOLING_UNPARSED_ARGUMENTS})!")
+  endif(ADD_CLANG_TOOLING_UNPARSED_ARGUMENTS)
+
+  # Get files from directories
+  list(APPEND ALL_CXX_SOURCE_FILES "")
+  list(APPEND ALL_HXX_SOURCE_FILES "")
+  foreach(dir ${ADD_CLANG_TOOLING_SOURCE_DIRS})
+    file(GLOB_RECURSE
+         CXX_SOURCE_FILES
+         ${dir}/*.cpp ${dir}/*.cxx ${dir}/*.cc ${dir}/*.c
+    )
+    set(ALL_CXX_SOURCE_FILES ${ALL_CXX_SOURCE_FILES} ${CXX_SOURCE_FILES})
+    file(GLOB_RECURSE
+         HXX_SOURCE_FILES
+         ${dir}/*.[ht]pp ${dir}/*.[ht]xx ${dir}/*.hh ${dir}/*.[ht]
+    )
+    set(ALL_HXX_SOURCE_FILES ${ALL_HXX_SOURCE_FILES} ${HXX_SOURCE_FILES})
+  endforeach(dir)
+
+  # Exclude headers from sources
+  foreach(exclude_dir ${ADD_CLANG_TOOLING_CT_HEADER_EXCLUDE_DIRS})
+    foreach (TMP_PATH ${ALL_HXX_SOURCE_FILES})
+        string (FIND ${TMP_PATH} ${exclude_dir} EXCLUDE_DIR_FOUND)
+        if (NOT ${EXCLUDE_DIR_FOUND} EQUAL -1)
+            list (REMOVE_ITEM ALL_HXX_SOURCE_FILES ${TMP_PATH})
+        endif ()
+    endforeach(TMP_PATH)
+  endforeach(exclude_dir)
+
+  set(ALL_SOURCE_FILES ${ALL_CXX_SOURCE_FILES} ${ALL_HXX_SOURCE_FILES})
+
+  if(ADD_CLANG_TOOLING_TARGET)
+    if(ADD_CLANG_TOOLING_TARGETS)
+      message(WARNING "[cmake_clang_tools::ADD_CLANG_TOOLING] Called with both TARGET and TARGETS arguments. Adding TARGET to TARGETS.")
+    endif(ADD_CLANG_TOOLING_TARGETS)
+    list (APPEND ADD_CLANG_TOOLING_TARGETS ${ADD_CLANG_TOOLING_TARGET})
+  endif(ADD_CLANG_TOOLING_TARGET)
+
+  if(NOT ${ADD_CLANG_TOOLING_DISABLE_CLANG_FORMAT})
+    # Forward options
+    set(CLANG_FORMAT_OPTIONS "")
+    if(${ADD_CLANG_TOOLING_CF_WERROR})
+      set(CLANG_FORMAT_OPTIONS ${CLANG_FORMAT_OPTIONS} "WERROR")
+    endif(${ADD_CLANG_TOOLING_CF_WERROR})
+    if(${ADD_CLANG_TOOLING_CF_FIX})
+      set(CLANG_FORMAT_OPTIONS ${CLANG_FORMAT_OPTIONS} "FIX")
+    endif(${ADD_CLANG_TOOLING_CF_FIX})
+    if(${ADD_CLANG_TOOLING_CF_QUIET})
+      set(CLANG_FORMAT_OPTIONS ${CLANG_FORMAT_OPTIONS} "QUIET")
+    endif(${ADD_CLANG_TOOLING_CF_QUIET})
+
+    # Call clang-format
+    ADD_CLANG_FORMAT(
+      ${CLANG_FORMAT_OPTIONS}
+      CONFIG_FILE ${ADD_CLANG_TOOLING_CF_CONFIG_FILE}
+      SOURCES ${ALL_SOURCE_FILES}
+      TARGETS ${ADD_CLANG_TOOLING_TARGETS}
+    )
+  endif(NOT ${ADD_CLANG_TOOLING_DISABLE_CLANG_FORMAT})
+
+  if(NOT ${ADD_CLANG_TOOLING_DISABLE_CLANG_TIDY})
+    # Forward options
+    set(CLANG_TIDY_OPTIONS "")
+    if(${ADD_CLANG_TOOLING_CT_WERROR})
+      set(CLANG_TIDY_OPTIONS ${CLANG_TIDY_OPTIONS} "WERROR")
+    endif(${ADD_CLANG_TOOLING_CT_WERROR})
+    if(${ADD_CLANG_TOOLING_CT_FIX})
+      set(CLANG_TIDY_OPTIONS ${CLANG_TIDY_OPTIONS} "FIX")
+    endif(${ADD_CLANG_TOOLING_CT_FIX})
+    if(${ADD_CLANG_TOOLING_CT_QUIET})
+      set(CLANG_TIDY_OPTIONS ${CLANG_TIDY_OPTIONS} "QUIET")
+    endif(${ADD_CLANG_TOOLING_CT_QUIET})
+    if(${ADD_CLANG_TOOLING_CT_ATTACH_TO_ALL})
+      set(CLANG_TIDY_OPTIONS ${CLANG_TIDY_OPTIONS} "ATTACH_TO_ALL")
+    endif(${ADD_CLANG_TOOLING_CT_ATTACH_TO_ALL})
+
+
+    # Call clang-tidy
+    ADD_CLANG_TIDY(
+      ${CLANG_TIDY_OPTIONS}
+      CONFIG_FILE ${ADD_CLANG_TOOLING_CT_CONFIG_FILE}
+      HEADER_FILTER ${ADD_CLANG_TOOLING_CT_HEADER_FILTER}
+      HEADER_DIRS ${ADD_CLANG_TOOLING_CT_HEADER_DIRS}
+      HEADER_EXCLUDE_DIRS ${ADD_CLANG_TOOLING_CT_HEADER_EXCLUDE_DIRS}
+      BUILD_DIR ${ADD_CLANG_TOOLING_CT_BUILD_DIR}
+      SOURCES "${ALL_CXX_SOURCE_FILES}"
+      HEADERS "${ALL_HXX_SOURCE_FILES}"
+      TARGETS ${ADD_CLANG_TOOLING_TARGETS}
+    )
+  endif(NOT ${ADD_CLANG_TOOLING_DISABLE_CLANG_TIDY})
+
+
+endmacro(ADD_CLANG_TOOLING)
+
+
+macro(ADD_DEFAULT_CLANG_TOOLING)
+  set(options CF_NO_FIX CF_FIX)
+  set(multiValueArgs CT_HEADER_DIRS SOURCE_DIRS TARGETS)
+  cmake_parse_arguments(ADD_DEFAULT_CLANG_TOOLING "${options}" "" "${multiValueArgs}" ${ARGN} )
+
+  # If no target is specified, set default.
+  if(NOT ADD_DEFAULT_CLANG_TOOLING_TARGETS)
+    set(ADD_DEFAULT_CLANG_TOOLING_TARGETS "")
+    set(CLANG_TOOLING_TARGET_CANDIDATES "${PROJECT_NAME}" "${PROJECT_NAME}_core" "${PROJECT_NAME}_node" "test_${PROJECT_NAME}" "test_${PROJECT_NAME}_core" "test_${PROJECT_NAME}_node")
+    foreach (CLANG_TOOLING_TARGET_CANDIDATE ${CLANG_TOOLING_TARGET_CANDIDATES})
+      if(TARGET ${CLANG_TOOLING_TARGET_CANDIDATE})
+        list(APPEND ADD_DEFAULT_CLANG_TOOLING_TARGETS ${CLANG_TOOLING_TARGET_CANDIDATE})
+      endif()
+    endforeach(CLANG_TOOLING_TARGET_CANDIDATE)
+  endif()
+
+  # If no sources set, set default.
+  if(NOT ADD_DEFAULT_CLANG_TOOLING_SOURCE_DIRS)
+    set(ADD_DEFAULT_CLANG_TOOLING_SOURCE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/src" "${CMAKE_CURRENT_SOURCE_DIR}/include" "${CMAKE_CURRENT_SOURCE_DIR}/test")
+  endif()
+
+  # If no header dirs set, set default.
+  if(NOT ADD_DEFAULT_CLANG_TOOLING_CT_HEADER_DIRS)
+    set(ADD_DEFAULT_CLANG_TOOLING_CT_HEADER_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/src" "${CMAKE_CURRENT_SOURCE_DIR}/include" "${CMAKE_CURRENT_SOURCE_DIR}/test")
+  endif()
+
+  # Options.
+  if(ADD_DEFAULT_CLANG_TOOLING_CF_FIX)
+    message(FATAL_ERROR "[cmake_clang_tools::ADD_DEFAULT_CLANG_TOOLING] CF_FIX is not supported, as it is enabled by default.")
+  endif()
+
+  set(ADD_DEFAULT_CLANG_TOOLING_OPTIONS "")
+  if(NOT ADD_DEFAULT_CLANG_TOOLING_CF_NO_FIX)
+    set(ADD_DEFAULT_CLANG_TOOLING_OPTIONS ${ADD_DEFAULT_CLANG_TOOLING_OPTIONS} "CF_FIX")
+  endif()
+
+  ADD_CLANG_TOOLING(
+    TARGETS
+      ${ADD_DEFAULT_CLANG_TOOLING_TARGETS}
+    SOURCE_DIRS
+      ${ADD_DEFAULT_CLANG_TOOLING_SOURCE_DIRS}
+    CT_HEADER_DIRS
+      ${ADD_DEFAULT_CLANG_TOOLING_CT_HEADER_DIRS}
+    ${ADD_DEFAULT_CLANG_TOOLING_OPTIONS}
+    ${ARGN}
+  )
+endmacro(ADD_DEFAULT_CLANG_TOOLING)

@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+
+<!--Copyright (C) 2014 by Jerome Maye                                        -->
+<!--jerome.maye@gmail.com                                                    -->
+<!--                                                                         -->
+<!--This program is free software; you can redistribute it and/or modify     -->
+<!--it under the terms of the Lesser GNU General Public License as published -->
+<!--by the Free Software Foundation; either version 3 of the License, or     -->
+<!--(at your option) any later version.                                      -->
+<!--                                                                         -->
+<!--This program is distributed in the hope that it will be useful,          -->
+<!--but WITHOUT ANY WARRANTY; without even the implied warranty of           -->
+<!--MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the             -->
+<!--Lesser GNU General Public License for more details.                      -->
+<!--                                                                         -->
+<!--You should have received a copy of the Lesser GNU General Public License -->
+<!--along with this program. If not, see <http://www.gnu.org/licenses/>.     -->
+
+<!-- This file contains the description of an Epson M-G365PD IMU. -->
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Parameters -->
+  <xacro:property name="l_imu" value="0.024"/> <!-- [m] -->
+  <xacro:property name="w_imu" value="0.024"/> <!-- [m] -->
+  <xacro:property name="h_imu" value="0.01"/> <!-- [m] -->
+  <xacro:property name="m_imu" value="0.01"/> <!-- [kg] -->
+  <xacro:property name="mu_imu" value="0.8"/> <!-- [] -->
+
+  <xacro:include filename="$(find swerve_description)/urdf/include/inertia_tensors.urdf.xacro"/>
+
+  <!-- IMU description -->
+  <xacro:macro name="epson_model" params="name parent *origin">
+    <link name="${name}_link">
+      <visual>
+        <origin xyz="0 0 ${h_imu * 0.5}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${l_imu} ${w_imu} ${h_imu}"/>
+        </geometry>
+        <material name="orange"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 ${h_imu * 0.5}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${l_imu} ${w_imu} ${h_imu}"/>
+        </geometry>
+      </collision>
+      <xacro:inertial_cuboid m="${m_imu}" w="${l_imu}" h="${h_imu}"
+        d="${w_imu}"/>
+    </link>
+
+    <joint name="${name}_joint" type="fixed">
+      <parent link="${parent}"/>
+      <child link="${name}_link"/>
+      <xacro:insert_block name="origin"/>
+    </joint>
+  </xacro:macro>
+
+  <!-- IMU Gazebo -->
+  <xacro:macro name="epson" params="name parent update_rate ns frame_id
+      topic_name *origin"> <!-- update_rate is not used -> Could be removed -->
+    <xacro:epson_model name="${name}" parent="${parent}">
+      <xacro:insert_block name="origin"/>
+    </xacro:epson_model>
+
+    <gazebo reference="${name}_link">
+      <material>Gazebo/Orange</material>
+      <mu1>${mu_imu}</mu1>
+      <mu2>${mu_imu}</mu2>
+    </gazebo>
+
+    <gazebo reference="${name}_joint">
+    </gazebo>
+
+    <gazebo reference="${name}_link">
+        <gravity>true</gravity>
+        <sensor name="imu_sensor" type="imu">
+          <always_on>true</always_on>
+          <update_rate>400</update_rate>
+          <visualize>true</visualize>
+          <topic>__default_topic__</topic>
+          <plugin filename="libgazebo_ros_imu_sensor.so" name="imu_plugin">
+            <topicName>${topic_name}</topicName>
+            <bodyName>${name}_link</bodyName>
+            <updateRateHZ>400.0</updateRateHZ>
+            <gaussianNoise>0.05</gaussianNoise>
+            <xyzOffset>0 0 0</xyzOffset>
+            <rpyOffset>0 0 0</rpyOffset>
+            <frameName>${frame_id}</frameName>
+            <initialOrientationAsReference>false</initialOrientationAsReference>
+          </plugin>
+          <pose>0 0 0 0 0 0</pose>
+        </sensor>
+      </gazebo>
+  </xacro:macro>
+
+</robot>

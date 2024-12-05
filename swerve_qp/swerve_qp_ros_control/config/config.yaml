@@ -1,0 +1,35 @@
+swerve_qp_ros_control:
+  type        : "swerve_qp_ros_control/Swerve_qp_RosControl"
+  publish_rate: 50
+  steer_joint_names:
+    - left_back_steer_joint
+    - left_front_steer_joint
+    - right_back_steer_joint
+    - right_front_steer_joint
+
+  wheel_joint_names:
+    - left_back_wheel_joint
+    - left_front_wheel_joint
+    - right_back_wheel_joint
+    - right_front_wheel_joint
+
+  arm_joint_names:
+    - SH_JOINT_1
+    - SH_JOINT_2
+    - SH_JOINT_3
+    - SH_JOINT_4
+    - SH_JOINT_5
+    - SH_JOINT_6
+
+  gripper_joint_names:
+    - left_outer_knuckle_joint
+
+    
+  qp_params:
+    K_theta: 0.05
+    mt: 0
+    Y: 0.1
+    KpSteer: 1.5
+  
+  the_odom_topic:  "odometry_controller/odom"
+  

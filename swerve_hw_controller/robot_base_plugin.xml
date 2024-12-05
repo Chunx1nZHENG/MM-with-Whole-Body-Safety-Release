@@ -1,0 +1,7 @@
+<library path="lib/libswerve_hw_controller)">
+  <class name="swerve/SwerveHW" type="swerve::SwerveHW" base_class_type="hardware_interface::RobotHW">
+    <description>
+      Interface for MyRobot1
+    </description>
+  </class>
+</library>

@@ -1,0 +1,2 @@
+# Expose cmake macros
+include("@CMAKE_CLANG_TOOLS_MACROS_PATH@/cmake_clang_tools-macros.cmake")

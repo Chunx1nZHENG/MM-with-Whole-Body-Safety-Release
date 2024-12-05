@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<launch>
+
+  <!-- Top-level source file to build robot from -->
+  <arg name="top_level_source" default="$(find swerve_description)/urdf/michelabi.xacro"/>
+  <arg name="tool_name" default="none"/>
+
+  <arg name="use_gui" default="true"/>
+  <arg name="rviz_config" default="visualize"/>
+  <arg name="model" default="$(find swerve_description)/urdf/whole_robot_with_gripper.xacro" />
+
+  <param name="robot_description" command="$(find xacro)/xacro $(arg model)" />
+
+
+  <group if="$(arg use_gui)">
+    <node name="joint_state_publisher_gui" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui"/>
+  </group>
+  <group unless="$(arg use_gui)">
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher"/>
+  </group>
+
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
+
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find swerve_description)/rviz/top_down.rviz"
+        required="true"/>
+
+</launch>

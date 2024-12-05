@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<launch>  
+  <!-- launch rviz -->
+  <arg name="rvizconfig" default="$(find swerve_control)/rviz/swerve.rviz" />
+  <node name="rviz_Moma" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)"  />
+
+
+    <!-- Controller manager gui -->
+  <node name="rqt_controller_manager" type="rqt_controller_manager" pkg="rqt_controller_manager" output="screen"/>
+</launch>

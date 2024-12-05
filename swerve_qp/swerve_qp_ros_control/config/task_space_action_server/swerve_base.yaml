@@ -1,0 +1,9 @@
+max_linear_velocity: 0.2
+max_linear_acceleration: 0.2
+max_angular_velocity: 0.25
+max_angular_acceleration: 0.5
+linear_goal_tolerance: 0.1
+angular_goal_tolerance: 0.05
+control_frame: odom
+end_effector_frame: end_effector_link
+goal_wait_time: 0.0

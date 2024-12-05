@@ -1,0 +1,71 @@
+name: Test Pinocchio on Linux
+
+on: [push,pull_request]
+
+jobs:
+  build:
+
+    runs-on: ${{ matrix.os }}
+    
+    strategy:
+      matrix:
+        os: [ubuntu-20.04,ubuntu-18.04] 
+    
+    steps:
+    - uses: actions/checkout@v1
+    - name: Register robotpkg
+      run: | 
+        sudo sh -c "echo \"deb [arch=amd64] http://robotpkg.openrobots.org/packages/debian/pub $(lsb_release -cs) robotpkg\" >> /etc/apt/sources.list "
+        sudo apt-key adv --fetch-keys http://robotpkg.openrobots.org/packages/debian/robotpkg.key
+    - name: Set and install dependencies
+      run: |
+        sudo rm -rf /usr/local/share/boost/1.69.0
+        export PYTHON3_VERSION=$(python3 -c "import sys; print(str(sys.version_info.major)+str(sys.version_info.minor))")
+        export APT_DEPENDENCIES="doxygen libboost-system-dev libboost-test-dev libboost-filesystem-dev libboost-program-options-dev libeigen3-dev liburdfdom-dev texlive-font-utils"
+        export APT_DEPENDENCIES=$APT_DEPENDENCIES" libboost-python-dev robotpkg-py"$PYTHON3_VERSION"-eigenpy python-numpy"
+        export APT_DEPENDENCIES=$APT_DEPENDENCIES" robotpkg-py"$PYTHON3_VERSION"-hpp-fcl"
+        echo $APT_DEPENDENCIES
+        sudo apt-get update -qq
+        sudo apt-get install -qq curl cppcheck ${APT_DEPENDENCIES}
+    - name: Free disk space
+      run: |
+        sudo apt clean
+        df -h
+    - name: Install casadi
+      run: |
+        mkdir third-party && cd third-party
+        git clone https://github.com/casadi/casadi.git -b 3.5.0 --depth 1
+        cd casadi
+        mkdir build && cd build
+        cmake .. -DCMAKE_BUILD_TYPE=Release -DWITH_EXAMPLES=OFF
+        sudo make install
+        cd ../..
+        rm -rf casadi
+        cd ..
+    - name: Run cmake
+      run: |
+        git submodule update --init
+        export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/opt/openrobots/lib/pkgconfig
+        export PATH=$PATH:/opt/openrobots/bin
+        export PYTHON3_DOT_VERSION=$(python3 -c "import sys; print(str(sys.version_info.major)+'.'+str(sys.version_info.minor))")
+        export PYTHONPATH=${PYTHONPATH}:/opt/openrobots/lib/python$PYTHON3_DOT_VERSION/site-packages
+        export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/openrobots/lib:/usr/local/lib:/usr/lib:/usr/lib/x86_64-linux-gnu
+        export MAKEFLAGS="-j1"
+        mkdir build
+        cd build
+        cmake .. -DCMAKE_BUILD_TYPE=Debug -DBUILD_WITH_COLLISION_SUPPORT=ON -DBUILD_ADVANCED_TESTING=ON -DBUILD_WITH_CASADI_SUPPORT=ON -DPYTHON_EXECUTABLE=$(which python3)
+        make
+        make build_tests
+        export CTEST_OUTPUT_ON_FAILURE=1
+        make test
+        sudo make install
+        cd ../unittest/packaging
+        mkdir build
+        cd build
+        export CMAKE_PREFIX_PATH=/usr/local
+        cmake ..
+        make
+        ./run_rnea
+        ./load_urdf
+        cd ../../../build
+        sudo make uninstall

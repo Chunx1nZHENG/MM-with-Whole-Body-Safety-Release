@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<launch>
+  <arg name="ns" default="swerve_base" />
+  <arg name="use_radar" default="false"/>
+  <arg name="use_state_estimator" default="false"/>
+  <arg name="startup_controllers" default="joint_state_controller odometry_controller swerve_qp_ros_control" />
+
+  <include file="$(find swerve_control)/launch/imu_odom_ekf.launch" if="$(arg use_state_estimator)"/>
+
+  <!-- Namespace params and controllers -->
+  <group ns="$(arg ns)">
+    <rosparam command="load" file="$(find swerve_qp_ros_control)/config/config.yaml" />
+    <rosparam command="load" file="$(find odometry_controller)/config/config.yaml" />
+    <rosparam command="load" file="$(find swerve_control)/config/joint_state_controller.yaml" />
+
+    <group if="$(arg use_radar)">
+      <param name="odometry_controller/enable_odom_tf" value="true"/>
+      <param name="odometry_controller/lidar_global_odom" value="true"/>
+      <param name="swerve_qp_ros_control/odom_topic" value="odometry_controller/odom"/>
+    </group>
+
+    <group unless="$(arg use_radar)">
+      <param name="odometry_controller/enable_odom_tf" value="true"/>
+      <param name="odometry_controller/lidar_global_odom" value="false"/>
+      <param name="swerve_qp_ros_control/odom_topic" value="odometry_controller/odom"/>
+    </group>
+
+    <node name="load_controllers" pkg="controller_manager" type="controller_manager" output="screen" args="load $(arg startup_controllers)" />
+  </group>
+
+  <node pkg="twist_mux" type="twist_mux" name="twist_mux" output="log" >
+    <remap from="cmd_vel_out" to="/cmd_vel"/>
+    <rosparam file="$(find swerve_control)/config/twist_mux.yaml" command="load"/>
+  </node>
+
+</launch>

@@ -1,0 +1,19 @@
+#ifndef MODEL_DEFINE_H
+#define MODEL_DEFINE_H
+
+#define LEG_NUM 4
+
+#define ROBOT_ACTUATOR_NUM 14
+#define ROBOT_JOINT_NUM 8
+#define ROBOT_Q_NUM 15
+#define ROBOT_DQ_NUM 14
+
+#define BODY_JOINT_ID 1
+// #define LEFT_FOOT_JOINT_ID 4
+// #define RIGHT_FOOT_JOINT_ID 10
+
+#define BODY_FRAME_ID 2
+// #define LEFT_FOOT_FRAME_ID 9
+// #define RIGHT_FOOT_FRAME_ID 21
+
+#endif  // MODEL_DEFINE_H

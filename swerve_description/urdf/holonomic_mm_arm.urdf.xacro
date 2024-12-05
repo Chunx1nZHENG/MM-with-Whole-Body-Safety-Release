@@ -1,0 +1,732 @@
+<?xml version="1.0"?>
+
+<robot name="holonomic_base"
+    xmlns:xacro="http://ros.org/wiki/xacro">
+
+    <!-- "" -->
+
+    <link name="base_link"/>
+
+    <link name="m_body">
+        <inertial>
+            <origin xyz="-0.0107573806983678 -0.000121111379146382 0.168820068401291" rpy="0 0 0" />
+            <mass value="7.75262327008847" />
+            <inertia ixx="0.0674364406464489" ixy="2.6530001859869E-06" ixz="-2.02885454828053E-06" iyy="0.0607129183001536" iyz="-2.82546028667119E-08" izz="0.117886359812438" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://swerve_description/meshes/holonomic/base_link.STL" />
+            </geometry>
+            <material name="">
+                <color rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://swerve_description/meshes/holonomic/base_link.STL" />
+            </geometry>
+        </collision>
+    </link>
+    <joint name="xbase_arm_joint" type="fixed">
+        <origin xyz="0.2625 0 0.2745" rpy="0 0 0" />
+        <parent link="base_link"/>
+        <child link="x_arm_link" />
+    </joint>
+
+
+
+    <joint name="base_link_to_body" type="fixed">
+        <parent link="base_link"/>
+        <child link="m_body"/>
+        <origin xyz="0 0 0"/>
+    </joint>
+
+    <link name="leg_fl">
+        <inertial>
+            <origin xyz="0.0 0.0 -0.041346" rpy="0 0 0" />
+            <mass value="0.1509" />
+            <inertia ixx="8.621E-05" ixy="-2.6953E-09" ixz="-8.1387E-10" iyy="5.4519E-05" iyz="1.5042E-09" izz="6.6419E-05" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://swerve_description/meshes/holonomic/turn_front_left_link.STL" />
+            </geometry>
+            <material name="">
+                <color rgba="0.75294 0.75294 0.75294 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://swerve_description/meshes/holonomic/turn_front_left_link.STL" />
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="left_front_steer_joint" type="revolute">
+        <origin xyz="0.285 0.215 0.1705" rpy="${pi} 0 ${pi}" />
+        <parent link="base_link" />
+        <child link="leg_fl" />
+        <axis xyz="0 0 1" />
+        <limit effort="20.0" lower="-3.341" upper="3.341" velocity="5.76"/>
+        <safety_controller k_position="100" k_velocity="100" soft_lower_limit="-3.141" soft_upper_limit="3.141" />
+        <joint_properties damping="1.0" friction="5.0"/>
+    </joint>
+    <transmission name="leg_fl_trans"> 
+        <type>transmission_interface/SimpleTransmission</type>
+        <actuator name="$leg_fl_steering">
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+        <joint name="left_front_steer_joint">
+            <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+        </joint>
+    </transmission>
+
+    <link name="leg_fr">
+        <inertial>
+            <origin xyz="-2.4774E-06 4.2768E-06 -0.041346" rpy="0 0 0" />
+            <mass value="0.1509" />
+            <inertia ixx="8.621E-05" ixy="-2.6953E-09" ixz="8.1387E-10" iyy="5.4519E-05" iyz="-1.5042E-09" izz="6.6419E-05" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://swerve_description/meshes/holonomic/turn_front_right_link.STL" />
+            </geometry>
+            <material name="">
+                <color rgba="0.75294 0.75294 0.75294 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://swerve_description/meshes/holonomic/turn_front_right_link.STL" />
+            </geometry>
+        </collision>
+    </link>
+    <joint name="right_front_steer_joint" type="revolute">
+        <origin xyz="0.285 -0.215 0.1705" rpy="3.14159265358979 0 3.14159265358979" />
+        <!-- <origin xyz="0.585 -0.215 0.1705" rpy="3.14159265358979 0 3.14159265358979" /> -->
+        <parent link="base_link" />
+        <child link="leg_fr" />
+        <axis xyz="0 0 1" />
+        <limit effort="20.0" lower="-3.341" upper="3.341" velocity="5.76"/>
+        <safety_controller k_position="100" k_velocity="100" soft_lower_limit="-3.141" soft_upper_limit="3.141" />
+        <joint_properties damping="1.0" friction="5.0"/>
+    </joint>
+    <transmission name="leg_fr_trans">
+        <type>transmission_interface/SimpleTransmission</type>
+        <actuator name="$leg_fr_steering">
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+        <joint name="right_front_steer_joint">
+            <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+        </joint>
+    </transmission>
+
+    <link name="leg_rl">
+        <inertial>
+            <origin xyz="2.47739936293234E-06 -0.00390427681696906 0.0596537478356015" rpy="0 0 0" />
+            <mass value="0.150899435444674" />
+            <inertia ixx="8.62104557625573E-05" ixy="-2.69534706876987E-09" ixz="-8.13867681148677E-10" iyy="5.45191084176943E-05" iyz="1.50418273401286E-09" izz="6.64192852433824E-05" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://swerve_description/meshes/holonomic/turn_back_left_link.STL" />
+            </geometry>
+            <material name="">
+                <color rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://swerve_description/meshes/holonomic/turn_back_left_link.STL" />
+            </geometry>
+        </collision>
+    </link>
+    <joint name="left_back_steer_joint" type="revolute">
+        <origin xyz="-0.285 0.215 0.1705" rpy="-3.1416 0 0" />
+        <!-- <origin xyz="-0.585 0.215 0.1705" rpy="-3.1416 0 0" /> -->
+        <parent link="base_link" />
+        <child link="leg_rl" />
+        <axis xyz="0 0 1" />
+        <limit effort="20.0" lower="-3.341" upper="3.341" velocity="5.76"/>
+        <safety_controller k_position="100" k_velocity="100" soft_lower_limit="-3.141" soft_upper_limit="3.141" />
+        <joint_properties damping="1.0" friction="5.0"/>
+    </joint>
+    <transmission name="leg_rl_trans">
+        <type>transmission_interface/SimpleTransmission</type>
+        <actuator name="$leg_rl_steering">
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+        <joint name="left_back_steer_joint">
+            <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+        </joint>
+    </transmission>
+
+    <link name="leg_rr">
+        <inertial>
+            <origin xyz="-2.4774E-06 4.2768E-06 -0.041346" rpy="0 0 0" />
+            <mass value="0.1509" />
+            <inertia ixx="8.621E-05" ixy="-2.6953E-09" ixz="8.1387E-10" iyy="5.4519E-05" iyz="-1.5042E-09" izz="6.6419E-05" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://swerve_description/meshes/holonomic/turn_back_right_link.STL" />
+            </geometry>
+            <material name="">
+                <color rgba="0.75294 0.75294 0.75294 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://swerve_description/meshes/holonomic/turn_back_right_link.STL" />
+            </geometry>
+        </collision>
+    </link>
+    <joint name="right_back_steer_joint" type="revolute">
+        <origin xyz="-0.285 -0.215 0.1705" rpy="3.1416 0 0" />
+        <!-- <origin xyz="-0.585 -0.215 0.1705" rpy="3.1416 0 0" /> -->
+        <parent link="base_link" />
+        <child link="leg_rr" />
+        <axis xyz="0 0 1" />
+        <limit effort="20.0" lower="-3.341" upper="3.341" velocity="5.76"/>
+        <safety_controller k_position="100" k_velocity="100" soft_lower_limit="-3.141" soft_upper_limit="3.141" />
+        <joint_properties damping="1.0" friction="5.0"/>
+    </joint>
+    <transmission name="leg_rr_trans">
+        <type>transmission_interface/SimpleTransmission</type>
+        <actuator name="$leg_rr_steering">
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+        <joint name="right_back_steer_joint">
+            <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+        </joint>
+    </transmission>
+
+
+    <link name="wheel_fl">
+        <inertial>
+            <origin xyz="-6.7203E-07 -0.0039185 1.1995E-07" rpy="0 0 0" />
+            <mass value="1.7978" />
+            <inertia ixx="0.0022135" ixy="1.588E-07" ixz="2.5603E-08" iyy="0.003666" iyz="-1.0669E-08" izz="0.0022134" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://swerve_description/meshes/holonomic/wheel_front_left_link.STL" />
+            </geometry>
+            <material name="">
+                <color rgba="1 0.75294 0.75294 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://swerve_description/meshes/holonomic/wheel_front_left_link.STL" />
+            </geometry>
+        </collision>
+    </link>
+    <joint name="left_front_wheel_joint" type="continuous">
+        <origin xyz="0 0.0039 0.101" rpy="-1.5708 1.5708 0" />
+        <parent link="leg_fl" />
+        <child link="wheel_fl" />
+        <axis xyz="0 0 1" />
+        <limit effort="1000" velocity="11.52"/>
+        <safety_controller k_position="100" k_velocity="100"/>
+        <joint_properties damping="1.0" friction="5.0"/>
+    </joint>
+    <transmission name="wheel_fl_trans">
+        <type>transmission_interface/SimpleTransmission</type>
+        <actuator name="wheel_fl_drive">
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+        <joint name="left_front_wheel_joint">
+            <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+        </joint>
+    </transmission>
+    <gazebo reference="wheel_fl">
+        <mu1 value="0.7"/>
+        <mu2 value="0.5"/>
+        <kp value="300000.0" />
+        <kd value="600.0" />
+    </gazebo>
+
+    <link name="wheel_fr">
+        <inertial>
+            <origin xyz="6.7203E-07 0.0039185 1.1995E-07" rpy="0 0 0" />
+            <mass value="1.7978" />
+            <inertia ixx="0.0022135" ixy="1.588E-07" ixz="-2.5603E-08" iyy="0.003666" iyz="1.0669E-08" izz="0.0022134" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://swerve_description/meshes/holonomic/wheel_front_right_link.STL" />
+            </geometry>
+            <material name="">
+                <color rgba="1 0.75294 0.75294 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://swerve_description/meshes/holonomic/wheel_front_right_link.STL" />
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="right_front_wheel_joint" type="continuous">
+        <origin xyz="0 -0.0039 0.101" rpy="1.5707963267949 1.5707963267949 0" />
+        <parent link="leg_fr" />
+        <child link="wheel_fr" />
+        <axis xyz="0 0 1" />
+        <limit effort="1000" velocity="11.52"/>
+        <safety_controller k_position="100" k_velocity="100"/>
+        <joint_properties damping="1.0" friction="5.0"/>
+    </joint>
+    <transmission name="wheel_fr_trans">
+        <type>transmission_interface/SimpleTransmission</type>
+        <actuator name="wheel_fr_drive">
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+        <joint name="right_front_wheel_joint">
+            <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+        </joint>
+    </transmission>
+    <gazebo reference="wheel_fr">
+        <mu1 value="0.7"/>
+        <mu2 value="0.5"/>
+        <kp value="300000.0" />
+        <kd value="600.0" />
+    </gazebo>
+
+    <link name="wheel_rl">
+        <inertial>
+            <origin xyz="-6.7203E-07 -0.0039185 1.1995E-07" rpy="0 0 0" />
+            <mass value="1.7978" />
+            <inertia ixx="0.0022135" ixy="1.588E-07" ixz="2.5603E-08" iyy="0.003666" iyz="-1.0669E-08" izz="0.0022134" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://swerve_description/meshes/holonomic/wheel_back_left_link.STL" />
+            </geometry>
+            <material name="">
+                <color rgba="1 0.75294 0.75294 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://swerve_description/meshes/holonomic/wheel_back_left_link.STL" />
+            </geometry>
+        </collision>
+    </link>
+    <joint name="left_back_wheel_joint" type="continuous">
+        <origin xyz="0 -0.0039 0.101" rpy="1.5708 1.5708 0" />
+        <parent link="leg_rl" />
+        <child link="wheel_rl" />
+        <axis xyz="0 0 1" />
+        <limit effort="1000" velocity="11.52"/>
+        <safety_controller k_position="100" k_velocity="100"/>
+        <joint_properties damping="1.0" friction="5.0"/>
+    </joint>
+    <transmission name="wheel_rl_trans">
+        <type>transmission_interface/SimpleTransmission</type>
+        <actuator name="wheel_rl_drive">
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+        <joint name="left_back_wheel_joint">
+            <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+        </joint>
+    </transmission>
+    <gazebo reference="wheel_rl">
+        <mu1 value="0.7"/>
+        <mu2 value="0.5"/>
+        <kp value="300000.0" />
+        <kd value="600.0" />
+    </gazebo>
+
+    <link name="wheel_rr">
+        <inertial>
+            <origin xyz="6.7203E-07 0.0039185 1.1995E-07" rpy="0 0 0" />
+            <mass value="1.7978" />
+            <inertia ixx="0.0022135" ixy="1.588E-07" ixz="-2.5603E-08" iyy="0.003666" iyz="1.0669E-08" izz="0.0022134" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://swerve_description/meshes/holonomic/wheel_back_right_link.STL" />
+            </geometry>
+            <material name="">
+                <color rgba="1 0.75294 0.75294 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://swerve_description/meshes/holonomic/wheel_back_right_link.STL" />
+            </geometry>
+        </collision>
+    </link>
+    <joint name="right_back_wheel_joint" type="continuous">
+        <origin xyz="0 0.0039 0.101" rpy="-1.5707963267949 1.5707963267949 0" />
+        <parent link="leg_rr" />
+        <child link="wheel_rr" />
+        <axis xyz="0 0 1" />
+        <limit effort="1000" velocity="11.52"/>
+        <safety_controller k_position="100" k_velocity="100"/>
+        <joint_properties damping="1.0" friction="5.0"/>
+    </joint>
+    <transmission name="wheel_rr_trans">
+        <type>transmission_interface/SimpleTransmission</type>
+        <actuator name="wheel_rr_drive">
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+        <joint name="right_back_wheel_joint">
+            <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+        </joint>
+    </transmission>
+    <gazebo reference="wheel_rr">
+        <mu1 value="0.7"/>
+        <mu2 value="0.5"/>
+        <kp value="300000.0" />
+        <kd value="600.0" />
+    </gazebo>
+
+       <link name="x_arm_link">
+        <inertial>
+            <origin xyz="-0.000648 -0.000166 0.084487" rpy="0 0 0" />
+            <mass value="1.697" />
+            <inertia ixx="0.004622" ixy="9E-06" ixz="6E-05" iyy="0.004495" iyz="9E-06" izz="0.002079" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://swerve_description/meshes/jaco/base_link.STL" />
+            </geometry>
+            <material name="">
+                <color rgba="0.75294 0.75294 0.75294 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://swerve_description/meshes/jaco/base_link.STL" />
+            </geometry>
+        </collision>
+    </link>
+    <link name="shoulder_link">
+        <inertial>
+            <origin xyz="-2.3E-05 -0.010364 -0.07336" rpy="0 0 0" />
+            <mass value="1.377" />
+            <inertia ixx="0.00457" ixy="1E-06" ixz="2E-06" iyy="0.004831" iyz="0.000448" izz="0.001409" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://swerve_description/meshes/jaco/shoulder_link.STL" />
+            </geometry>
+            <material name="">
+                <color rgba="0.75294 0.75294 0.75294 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://swerve_description/meshes/jaco/shoulder_link.STL" />
+            </geometry>
+        </collision>
+    </link>
+    <joint name="SH_JOINT_1" type="revolute">
+        <origin xyz="0 0 0.15643" rpy="-3.1416 0.0 0.0" />
+        <parent link="x_arm_link" />
+        <child link="shoulder_link" />
+        <axis xyz="0 0 1" />
+        <limit effort="39.0" lower="-6.28" upper="6.28" velocity="1.3963"/>
+        <safety_controller k_position="100" k_velocity="100" soft_lower_limit="-6.2" soft_upper_limit="6.2" />
+        <joint_properties damping="1.0" friction="5.0"/>
+    </joint>
+    <link name="bicep_link">
+        <inertial>
+            <origin xyz="3.5E-05 -0.208207 -0.01889" rpy="0 0 0" />
+            <mass value="1.262" />
+            <inertia ixx="0.046752" ixy="-9E-06" ixz="0" iyy="0.00085" iyz="-9.8E-05" izz="0.047188" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://swerve_description/meshes/jaco/bicep_link.STL" />
+            </geometry>
+            <material name="">
+                <color rgba="0.75294 0.75294 0.75294 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://swerve_description/meshes/jaco/bicep_link.STL" />
+            </geometry>
+        </collision>
+    </link>
+    <joint name="SH_JOINT_2" type="revolute">
+        <origin xyz="0 0.005375 -0.12838" rpy="1.5708 0.0 0.0" />
+        <parent link="shoulder_link" />
+        <child link="bicep_link" />
+        <axis xyz="0 0 1" />
+        <limit effort="39.0" lower="-2.24" upper="2.24" velocity="1.3963"/>
+        <safety_controller k_position="100" k_velocity="100" soft_lower_limit="-2.24" soft_upper_limit="2.24" />
+        <joint_properties damping="1.0" friction="5.0"/>
+    </joint>
+    <link name="forearm_link">
+        <inertial>
+            <origin xyz="1.8E-05 0.076168 -0.01397" rpy="0 0 0" />
+            <mass value="0.93" />
+            <inertia ixx="0.008292" ixy="-1E-06" ixz="0" iyy="0.000628" iyz="0.000432" izz="0.008464" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://swerve_description/meshes/jaco/forearm_link.STL" />
+            </geometry>
+            <material name="">
+                <color rgba="0.75294 0.75294 0.75294 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://swerve_description/meshes/jaco/forearm_link.STL" />
+            </geometry>
+        </collision>
+    </link>
+    <joint name="SH_JOINT_3" type="revolute">
+        <origin xyz="0 -0.41 0" rpy="3.1416 0 0" />
+        <parent link="bicep_link" />
+        <child link="forearm_link" />
+        <axis xyz="0 0 1" />
+        <limit effort="39.0" lower="-2.57" upper="2.57" velocity="1.3963"/>
+        <safety_controller k_position="100" k_velocity="100" soft_lower_limit="-2.57" soft_upper_limit="2.57" />
+        <joint_properties damping="1.0" friction="5.0"/>
+    </joint>
+    <link name="spherical_wrist_1_link">
+        <inertial>
+            <origin xyz="-1E-06 0.008486 -0.062937" rpy="0 0 0" />
+            <mass value="0.6781" />
+            <inertia ixx="0.001645" ixy="0" ixz="0" iyy="0.001666" iyz="-0.000234" izz="0.000389" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://swerve_description/meshes/jaco/spherical_wrist_1_link.STL" />
+            </geometry>
+            <material name="">
+                <color rgba="0.75294 0.75294 0.75294 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://swerve_description/meshes/jaco/spherical_wrist_1_link.STL" />
+            </geometry>
+        </collision>
+    </link>
+    <joint name="SH_JOINT_4" type="revolute">
+        <origin xyz="0 0.20843 -0.006375" rpy="1.5708 0.0 0.0" />
+        <parent link="forearm_link" />
+        <child link="spherical_wrist_1_link" />
+        <axis xyz="0 0 1" />
+        <limit effort="9.0" lower="-6.28" upper="6.28" velocity="1.2218"/>
+        <safety_controller k_position="100" k_velocity="100" soft_lower_limit="-6.18" soft_upper_limit="6.18" />
+        <joint_properties damping="1.0" friction="5.0"/>
+    </joint>
+    <link name="spherical_wrist_2_link">
+        <inertial>
+            <origin xyz="-1E-06 0.046429 -0.008704" rpy="0 0 0" />
+            <mass value="0.678" />
+            <inertia ixx="0.001685" ixy="0" ixz="0" iyy="0.0004" iyz="0.000255" izz="0.001696" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://swerve_description/meshes/jaco/spherical_wrist_2_link.STL" />
+            </geometry>
+            <material name="">
+                <color rgba="0.75294 0.75294 0.75294 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://swerve_description/meshes/jaco/spherical_wrist_2_link.STL" />
+            </geometry>
+        </collision>
+    </link>
+    <joint name="SH_JOINT_5" type="revolute">
+        <origin xyz="0 -0.00017505 -0.10593" rpy="-1.5708 0.0 0.0" />
+        <parent link="spherical_wrist_1_link" />
+        <child link="spherical_wrist_2_link" />
+        <axis xyz="0 0 1" />
+        <limit effort="9.0" lower="-2.09" upper="2.09" velocity="1.2218"/>
+        <safety_controller k_position="100" k_velocity="100" soft_lower_limit="-2.09" soft_upper_limit="2.09" />
+        <joint_properties damping="1.0" friction="5.0"/>
+    </joint>
+    <xacro:if value="true">
+        <link name="bracelet_link">
+            <inertial>
+                <origin xyz="0.000281 0.011402 -0.029798" rpy="0 0 0" />
+                <mass value="0.5" />
+                <inertia ixx="0.000587" ixy="3E-06" ixz="3E-06" iyy="0.000369" iyz="-0.000118" izz="0.000609" />
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="package://swerve_description/meshes/jaco/bracelet_with_vision_link.STL" />
+                </geometry>
+                <material name="">
+                    <color rgba="0.75294 0.75294 0.75294 1" />
+                </material>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="package://swerve_description/meshes/jaco/bracelet_with_vision_link.STL" />
+                </geometry>
+            </collision>
+        </link>
+    </xacro:if>
+    <xacro:unless value="true">
+        <link name="bracelet_link">
+            <inertial>
+                <origin xyz="-9.3E-05 0.000132 -0.022905" rpy="0 0 0" />
+                <mass value="0.364" />
+                <inertia ixx="0.000214" ixy="0" ixz="1E-06" iyy="0.000223" iyz="-2E-06" izz="0.00024" />
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="package://swerve_description/meshes/jaco/bracelet_no_vision_link.STL" />
+                </geometry>
+                <material name="">
+                    <color rgba="0.75294 0.75294 0.75294 1" />
+                </material>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="package://swerve_description/meshes/jaco/bracelet_no_vision_link.STL" />
+                </geometry>
+            </collision>
+        </link>
+    </xacro:unless>
+    <joint name="SH_JOINT_6" type="revolute">
+        <origin xyz="0 0.10593 -0.00017505" rpy="1.5708 0.0 0.0" />
+        <parent link="spherical_wrist_2_link" />
+        <child link="bracelet_link" />
+        <axis xyz="0 0 1" />
+        <limit effort="9.0" lower="-3.341" upper="3.341" velocity="1.2218"/>
+        <safety_controller k_position="100" k_velocity="100" soft_lower_limit="-3.141" soft_upper_limit="3.141" />
+        <joint_properties damping="1.0" friction="5.0"/>
+    </joint>
+    <link name="end_effector_link" />
+    <joint name="end_effector" type="fixed">
+        <origin xyz="0 0 -0.2215250000000001" rpy="3.14159265358979 1.09937075168372E-32 3.14159265358979" />
+        <parent link="bracelet_link" />
+        <child link="end_effector_link" />
+        <axis xyz="0 0 0" />
+    </joint>
+    <xacro:if value="true">
+        <link name="camera_link" />
+        <joint name="camera_module" type="fixed">
+            <origin xyz="0 0.05639 -0.00305" rpy="3.14159265358979 3.14159265358979 0" />
+            <parent link="end_effector_link" />
+            <child link="camera_link" />
+        </joint>
+        <link name="camera_depth_frame" />
+        <joint name="depth_module" type="fixed">
+            <origin xyz="0.0275 0.066 -0.00305" rpy="3.14159265358979 3.14159265358979 0" />
+            <parent link="end_effector_link" />
+            <child link="camera_depth_frame" />
+        </joint>
+        <link name="camera_color_frame" />
+        <joint name="color_module" type="fixed">
+            <origin xyz="0 0.05639 -0.00305" rpy="3.14159265358979 3.14159265358979 0" />
+            <parent link="end_effector_link" />
+            <child link="camera_color_frame" />
+        </joint>
+    </xacro:if>
+
+ 
+
+    <transmission name="joint_1_transmission">
+        <type>transmission_interface/SimpleTransmission</type>
+        <actuator name="joint_1_motor">
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+        <joint name="SH_JOINT_1">
+            <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+        </joint>
+    </transmission>
+    <transmission name="joint_2_transmission">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="SH_JOINT_2">
+            <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="joint_2_motor">
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+    </transmission>
+
+    <transmission name="joint_3_transmission">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="SH_JOINT_3">
+            <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="joint_3_motor">
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+    </transmission>
+
+    <transmission name="joint_4_transmission">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="SH_JOINT_4">
+            <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="joint_4_motor">
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+    </transmission>
+
+    <transmission name="joint_5_transmission">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="SH_JOINT_5">
+            <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="joint_5_motor">
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+    </transmission>
+
+    <transmission name="joint_6_transmission">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="SH_JOINT_6">
+            <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="joint_6_motor">
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+    </transmission>
+
+    <gazebo>
+        <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so"/>
+    </gazebo>
+
+
+</robot>

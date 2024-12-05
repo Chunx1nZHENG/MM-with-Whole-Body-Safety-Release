@@ -1,0 +1,269 @@
+Panels:
+  - Class: rviz/Displays
+    Help Height: 78
+    Name: Displays
+    Property Tree Widget:
+      Expanded:
+        - /Global Options1
+        - /Status1
+        - /RobotModel1
+      Splitter Ratio: 0.47411999106407166
+    Tree Height: 934
+  - Class: rviz/Views
+    Expanded:
+      - /Current View1
+    Name: Views
+    Splitter Ratio: 0.5
+Preferences:
+  PromptSaveOnExit: true
+Toolbars:
+  toolButtonStyle: 2
+Visualization Manager:
+  Class: ""
+  Displays:
+    - Alpha: 1
+      Class: rviz/RobotModel
+      Collision Enabled: false
+      Enabled: true
+      Links:
+        ARM:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        All Links Enabled: false
+        BASE_ADAPTER_1:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        BASE_FORCETORQUESENSOR:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        BASE_IMU:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        EE_FORCETORQUESENSOR:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        EE_IMU:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        ELBOW:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        ENDEFFECTOR:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        Expand Joint Details: false
+        Expand Link Details: false
+        Expand Tree: false
+        FOREARM:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        FT_FLANGE:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        Link Tree Style: Links in Alphabetic Order
+        SHOULDER:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        WRIST_1:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        WRIST_2:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        arm_fl:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        arm_fr:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        arm_mount:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        arm_rl:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        arm_rr:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        body:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        control_box:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: false
+        control_box_inertia:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        leg_fl:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        leg_fr:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        leg_rl:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        leg_rr:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        mabi_attachment:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        wheel_fl:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        wheel_fr:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        wheel_rl:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        wheel_rr:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+      Name: RobotModel
+      Robot Description: /mabi_description
+      TF Prefix: ""
+      Update Interval: 0
+      Value: true
+      Visual Enabled: true
+    - Class: rviz/TF
+      Enabled: false
+      Frame Timeout: 15
+      Frames:
+        All Enabled: false
+      Marker Alpha: 1
+      Marker Scale: 0.30000001192092896
+      Name: TF
+      Show Arrows: false
+      Show Axes: true
+      Show Names: true
+      Tree:
+        {}
+      Update Interval: 0
+      Value: false
+    - Alpha: 0.5
+      Cell Size: 1
+      Class: rviz/Grid
+      Color: 160; 160; 164
+      Enabled: false
+      Line Style:
+        Line Width: 0.029999999329447746
+        Value: Lines
+      Name: Grid
+      Normal Cell Count: 0
+      Offset:
+        X: 0
+        Y: 0
+        Z: 0
+      Plane: XY
+      Plane Cell Count: 10
+      Reference Frame: base_link
+      Value: false
+  Enabled: true
+  Global Options:
+    Background Color: 255; 255; 255
+    Default Light: true
+    Fixed Frame: base_link
+    Frame Rate: 34
+  Name: root
+  Tools:
+    - Class: rviz/MoveCamera
+    - Class: rviz/Interact
+      Hide Inactive Objects: true
+    - Class: rviz/Select
+    - Class: rviz/SetInitialPose
+      Theta std deviation: 0.2617993950843811
+      Topic: initialpose
+      X std deviation: 0.5
+      Y std deviation: 0.5
+    - Class: rviz/SetGoal
+      Topic: goal
+  Value: true
+  Views:
+    Current:
+      Angle: 1.5707963705062866
+      Class: rviz/TopDownOrtho
+      Enable Stereo Rendering:
+        Stereo Eye Separation: 0.05999999865889549
+        Stereo Focal Distance: 1
+        Swap Stereo Eyes: false
+        Value: false
+      Invert Z Axis: false
+      Name: Current View
+      Near Clip Distance: 0.009999999776482582
+      Scale: 455.4717102050781
+      Target Frame: <Fixed Frame>
+      X: -0.14185957610607147
+      Y: 0.012169651687145233
+    Saved: ~
+Window Geometry:
+  Displays:
+    collapsed: false
+  Height: 1163
+  Hide Left Dock: false
+  Hide Right Dock: false
+  QMainWindow State: 000000ff00000000fd00000002000000000000020b00000431fc0200000001fb000000100044006900730070006c006100790073010000003d00000431000000c900ffffff00000001000001a800000431fc0200000001fb0000000a00560069006500770073010000003d00000431000000a400ffffff000003c10000043100000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  Views:
+    collapsed: false
+  Width: 1920
+  X: 0
+  Y: 0

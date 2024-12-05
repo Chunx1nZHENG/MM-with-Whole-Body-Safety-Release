@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <!-- Contact model -->
+    <xacro:property name="kp" value="1000000.0"/>
+    <xacro:property name="kd" value="1.5"/>
+    <xacro:property name="mu" value="1.2"/>
+
+    <!-- Link: control box -->
+    <xacro:property name="x_ab"   value="0.0"/> <!-- [m] -->
+    <xacro:property name="y_ab"   value="0.0"/> <!-- [m] -->
+    <xacro:property name="z_ab"   value="0.0"/> <!-- [m] -->
+    <xacro:property name="s_x_ab" value="0.0"/> <!-- [m] -->
+    <xacro:property name="s_y_ab" value="0.0"/> <!-- [m] -->
+    <xacro:property name="s_z_ab" value="0.0648"/> <!-- [m] -->
+    <xacro:property name="m_ab"   value="15"/> <!-- [kg] -->
+    <xacro:property name="ixx_ab" value="0.00322"/> <!-- [kg * m^2] -->
+    <xacro:property name="iyy_ab" value="0.00322"/> <!-- [kg * m^2] -->
+    <xacro:property name="izz_ab" value="0.0023264"/> <!-- [kg * m^2] -->
+    <xacro:property name="ixy_ab" value="0.0"/> <!-- [kg * m^2] -->
+    <xacro:property name="ixz_ab" value="0.0"/> <!-- [kg * m^2] -->
+    <xacro:property name="iyz_ab" value="0.0"/> <!-- [kg * m^2] -->
+    <xacro:property name="collision_r_ab" value="0.070"/> <!-- [m] -->
+    <xacro:property name="collision_l_ab" value="0.125"/> <!-- [m] -->
+    <xacro:arg name="has_base_ft_sensor" default="false"/>
+
+  <!-- Mabi arm control box -->
+  <joint name="base_to_control_box" type="fixed">
+    <parent link="mabi_attachment" />
+    <child link="control_box" />
+    <origin xyz="0 -0.11 0.2" rpy="0 0 0" />
+  </joint>
+
+  <link name="control_box">
+    <visual>
+      <origin xyz="0 0 -0.1" rpy="0 0 0" />
+      <geometry>
+        <box size="0.5 0.5 0.21" />
+      </geometry>
+      <material name="gray">
+        <color rgba="${105/255} ${105/255} ${105/255} 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 -0.1" rpy="0 0 0" />
+      <geometry>
+        <box size="0.5 0.5 0.2" />
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Fixed joint to add dummy inertia link -->
+  <joint name="control_box_inertia" type="fixed">
+    <parent link="control_box" />
+    <child link="control_box_inertia" />
+    <origin xyz="0 0 0" rpy="0 0 0" />
+  </joint>
+
+  <!-- Dummy inertia link, because KDL cannot have inertia on the base link -->
+  <link name="control_box_inertia">
+
+    <xacro:cylinder_inertial radius="0.25" length="0.2" mass="${m_ab}">
+      <origin xyz="0 0 -0.1" rpy="0 0 0" />
+    </xacro:cylinder_inertial>
+    <inertial>
+      <origin xyz="${s_x_ab} ${s_y_ab} ${s_z_ab}" rpy="0 0 0" />
+      <mass value="${m_ab}" />
+      <inertia ixx="${ixx_ab}" ixy="${ixy_ab}" iyy="${iyy_ab}" ixz="${ixz_ab}" iyz="${iyz_ab}" izz="${izz_ab}" />
+    </inertial>
+  </link>
+
+  <gazebo reference="control_box">
+    <kp>${kp}</kp>
+    <kd>${kd}</kd>
+    <mu1>${mu}</mu1>
+    <mu2>${mu}</mu2>
+  </gazebo>
+</robot>

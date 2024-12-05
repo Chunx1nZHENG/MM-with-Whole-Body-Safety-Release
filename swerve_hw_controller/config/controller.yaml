@@ -1,0 +1,11 @@
+swerve_hw:        
+  loop_frequency: 200
+  cycle_time_error_threshold: 0.002
+  thread_priority: 95
+
+joint_state_controller:
+    type: joint_state_controller/JointStateController
+    publish_rate: 100
+
+# velocity_controller:
+#     type: velocity_controllers/JointVelocityController

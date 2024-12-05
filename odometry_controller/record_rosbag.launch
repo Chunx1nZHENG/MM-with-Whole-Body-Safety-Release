@@ -1,0 +1,9 @@
+<launch>
+ <node pkg="rosbag" type="record" name="record_odometry_gazebo" output="screen"
+       args="record -o odometry_gazebo
+       /gazebo/model_states
+       /swerve/odometry_controller/odom
+       /swerve/gazebo_odom
+       /swerve/odometry_controller/odom_twist_world"
+       />
+</launch>

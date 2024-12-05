@@ -1,0 +1,14 @@
+<launch>
+  <arg name="ns" default="swerve_base" />
+  <arg name="urdf_path" default="$(find swerve_description)/urdf/whole_robot_with_gripper.xacro" />
+
+  <param name="robot_description" command="$(find xacro)/xacro $(arg urdf_path)"/>
+
+  <!-- 启动 rosbag 回放 -->
+  <node name="rosbag_play" pkg="rosbag" type="play" args="$(find swerve_control)/line3.bag -r 2" output="screen" />
+  <arg name="rvizconfig" default="$(find swerve_control)/rviz/bag.rviz" />
+  <node name="rviz_Moma" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)"  />
+  
+
+
+</launch>        

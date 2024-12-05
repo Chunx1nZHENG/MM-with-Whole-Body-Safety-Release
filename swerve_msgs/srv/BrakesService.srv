@@ -1,0 +1,10 @@
+float32 lb_angle
+bool lb_brake_active
+float32 lf_angle
+bool lf_brake_active 
+float32 rb_angle
+bool rb_brake_active 
+float32 rf_angle
+bool rf_brake_active
+---
+bool result

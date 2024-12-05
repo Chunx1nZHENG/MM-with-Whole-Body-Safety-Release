@@ -1,0 +1,25 @@
+joint_state_controller:
+  type: joint_state_controller/JointStateController
+  publish_rate: 50
+
+# gripper_controller:
+#   type: effort_controllers/GripperActionController
+#   gains:
+#     left_outer_knuckle_joint: {p: 30,  d: 0.1, i: 1, i_clamp: 1}
+#   joint: left_outer_knuckle_joint
+#   action_monitor_rate: 10
+#   goal_tolerance: 0.1
+#   max_effort: 10
+#   stall_position_threshold: 0.05 # Tune to fit your robot
+#   stall_timeout: 1
+
+gazebo_ros_control:
+  pid_gains:
+
+    right_outer_knuckle_joint: {p: 30,  d: 0.1, i: 1, i_clamp: 1}
+    # SH_JOINT_1: {P: 10, I: 0, D: 0}
+    # SH_JOINT_2: {P: 10, I: 0, D: 0}
+    # SH_JOINT_3: {P: 10, I: 0, D: 0}
+    # SH_JOINT_4: {P: 10, I: 0, D: 0}
+    # SH_JOINT_5: {P: 10, I: 0, D: 0}
+    SH_JOINT_6: {P: 100, I: 0.1, D: 0}

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+  <node name="task_space_action_server" pkg="trapezoidal_tracker" type="task_space_action_server_node" output="screen" launch-prefix="">
+    <rosparam command="load" file="$(find trapezoidal_tracker)/config/task_space_action_server.yaml"/>
+  </node>
+</launch>

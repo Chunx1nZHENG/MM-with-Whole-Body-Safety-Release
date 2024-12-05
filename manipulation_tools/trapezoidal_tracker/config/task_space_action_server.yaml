@@ -1,0 +1,9 @@
+max_linear_velocity: 0.5
+max_linear_acceleration: 0.25
+max_angular_velocity: 1.0
+max_angular_acceleration: 2.0
+linear_goal_tolerance: 0.008
+angular_goal_tolerance: 0.0349 # ~ 2 deg
+current_pose_publishing_rate: 200.0
+control_frame: arm_mount
+end_effector_frame: ENDEFFECTOR

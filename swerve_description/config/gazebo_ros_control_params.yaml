@@ -1,0 +1,22 @@
+# gazebo_ros_control_params.yaml
+gazebo_ros_control/pid_gains:
+  body_to_arm_fl: {p: 1000.0, i: 0.1, d: 100.0}
+  arm_fl_to_leg_fl: {p: 1000.0, i: 0.1, d: 100.0}
+  leg_fl_to_wheel_fl: {p: 1000.0, i: 0.1, d: 100.0}
+  body_to_arm_fr: {p: 1000.0, i: 0.1, d: 100.0}
+  arm_fr_to_leg_fr: {p: 1000.0, i: 0.1, d: 100.0}
+  leg_fr_to_wheel_fr: {p: 1000.0, i: 0.1, d: 100.0}
+  body_to_arm_rl: {p: 1000.0, i: 0.1, d: 100.0}
+  arm_rl_to_leg_rl: {p: 1000.0, i: 0.1, d: 100.0}
+  leg_rl_to_wheel_rl: {p: 1000.0, i: 0.1, d: 100.0}
+  body_to_arm_rr: {p: 1000.0, i: 0.1, d: 100.0}
+  arm_rr_to_leg_rr: {p: 1000.0, i: 0.1, d: 100.0}
+  leg_rr_to_wheel_rr: {p: 1000.0, i: 0.1, d: 100.0}
+
+/swerve/gazebo_ros_control/pid_gains:
+  SH_ROT: {p: 150.0, i: 5000.0, d: 10.0}
+  SH_FLE: {p: 150.0, i: 5000.0, d: 10.0}
+  EL_FLE: {p: 50.0, i: 3000.0, d: 5.0}
+  EL_ROT: {p: 15.0, i: 1500.0, d: 0.3}
+  WR_FLE: {p: 10.0, i: 800.0, d: 0.2}
+  WR_ROT: {p: 3.0, i: 500.0, d: 0.1}

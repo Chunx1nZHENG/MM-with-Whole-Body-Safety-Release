@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<robot name="dh_ag95_gripper" xmlns:xacro="http://ros.org/wiki/xacro">
+    <!-- import main macro -->
+    <xacro:include filename="$(find swerve_description)/urdf/gripper/ag95_macro.xacro" />
+
+    <!-- parameters -->
+    <xacro:arg name="transmission_hw_interface" default="hardware_interface/EffortJointInterface" />
+
+    <!-- gripper -->
+    <xacro:dh_ag95_gripper
+        prefix=""
+        transmission_hw_interface="$(arg transmission_hw_interface)" parent="end_effector_link">
+        <origin xyz="0 0 0" rpy="0 0 0" />
+    </xacro:dh_ag95_gripper>
+
+
+    <gazebo>
+        <plugin name="ros_control" filename="libgazebo_ros_control.so"></plugin>
+    </gazebo>
+</robot>

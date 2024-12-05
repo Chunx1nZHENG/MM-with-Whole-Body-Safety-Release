@@ -1,0 +1,258 @@
+model_information {
+  armPresent     true      // false: swerve_base, true: swerve_base + arm
+  
+  ; end-effector frame of the robot (from URDF)
+  eeFrame                  "end_effector_link"
+}
+
+model_settings
+{
+  usePreComputation             false
+  recompileLibraries            true
+}
+
+; DDP settings
+ddp
+{
+  algorithm                     ILQR
+
+  nThreads                      4
+
+  maxNumIterations              10
+  minRelCost                    0.1
+  constraintTolerance           1e-3
+
+  displayInfo                   false
+  displayShortSummary           true
+  checkNumericalStability       false
+
+  AbsTolODE                     1e-5
+  RelTolODE                     1e-3
+  timeStep                      1e-3
+  maxNumStepsPerSecond          100000
+  backwardPassIntegratorType    ODE45
+
+  inequalityConstraintMu        100.0
+  inequalityConstraintDelta     1.1
+
+  preComputeRiccatiTerms        true
+  useNominalTimeForBackwardPass false
+
+  useFeedbackPolicy             false
+
+  strategy                      LINE_SEARCH
+  lineSearch
+  {
+    minStepLength                 1e-2
+    maxStepLength                 1.0
+    hessianCorrectionStrategy     DIAGONAL_SHIFT
+    hessianCorrectionMultiple     1e-3
+  }
+}
+
+; Rollout settings
+rollout
+{
+  AbsTolODE                     1e-5
+  RelTolODE                     1e-3
+  timeStep                      1e-2
+  maxNumStepsPerSecond          100000
+  checkNumericalStability       false
+}
+
+; MPC settings
+mpc
+{
+  timeHorizon                    5.0
+  numPartitions                  1
+
+  runtimeMaxNumIterations        1
+  initMaxNumIterations           10
+
+  runtimeMaxStepLength           1.0
+  runtimeMinStepLength           1e-2
+  initMaxStepLength              1.0
+  initMinStepLength              1e-2
+
+  debugPrint                     false
+  coldStart                      false
+
+  useParallelRiccatiSolver       true  ; use disjoint riccati solver in MP case and recedingHorizon fashion
+
+  solutionTimeWindow             5.0   ; [s]
+
+  mpcDesiredFrequency            50   ; [Hz]
+  mrtDesiredFrequency            400   ; [Hz]
+}
+
+; initial state
+initialState
+{
+  (0,0)  0.0  ; position x
+  (1,0)  0.0  ; position y
+  (2,0)  0.0  ; position z
+  (3,0)  0.0  ; orientation qx
+  (4,0)  0.0  ; orientation qy
+  (5,0)  0.0  ; orientation qz
+  (6,0)  1.0  ; orientation qw
+  (7,0)  0.0  ; lb steer
+  (8,0)  0.0  ; lb wheel
+  (9,0)  0.0  ; lf steer
+  (10,0)  0.0  ; lf wheel
+  (11,0)  0.0  ; rb steer
+  (12,0)  0.0  ; rb wheel
+  (13,0)  0.0  ; rf steer
+  (14,0)  0.0  ; rf wheel
+  (15,0)  0.0  ; rf wheel
+  (16,0)  0.0  ; rf wheel
+  (17,0)  0.0  ; rf wheel
+  (18,0)  0.0  ; rf wheel
+  (19,0)  0.0  ; rf wheel
+  (20,0)  0.0  ; rf wheel
+}
+
+inputCost
+{
+  ; control weight matrix
+  R
+  {
+    scaling 1e-1
+
+    (0,0)    2.0  ; x velocity
+    (1,1)    2.0  ; y velocity
+    (2,2)    2.0  ; turning velocity
+    (3,3)    2.0  ; lb steer
+    (4,4)    2.0  ; lb wheel
+    (5,5)    2.0  ; lf steer
+    (6,6)    2.0  ; lf wheel
+    (7,7)    2.0  ; rb steer
+    (8,8)    2.0  ; rb wheel
+    (9,9)    2.0  ; rf steer
+    (10,10)  2.0  ; rf wheel
+    (11,11)  5.0  ; sh rot
+    (12,12)  10.0  ; sh fle
+    (13,13)  10.0  ; el fle
+    (14,14)  5.0  ; el rot
+    (15,15)  10.0  ; wr fle
+    (16,16)  5.0  ; wr rot
+  }
+}
+
+legsCost
+{
+  ; control weight matrix
+  Q
+  {
+    scaling 1e-1
+
+    (0,0)  50.0  ; lb leg
+    (1,1)  50.0  ; lf leg
+    (2,2)  50.0  ; rb leg
+    (3,3)  50.0  ; rf leg
+  }
+}
+
+endEffector
+{
+  name "end_effector_link" ; name defined in the URDF
+
+  ; end effector quadratic penalty scaling
+  muPosition  250.0
+  muOrientation  500.0
+}
+
+quadraticPenalty
+{
+  wheelRolling 1000
+  nominalSteerActive 1 ; 0 for deactive, 1 for active, 2 for conditionally active when the steering joints are close to the limits
+  nominalSteerState 0.5
+  nominalArmState 0.2
+}
+
+jointVelocityLimits
+{
+  lowerBound
+  {
+    (0,0) -1.5  ; x velocity
+    (1,0) -1.5  ; y velocity
+    (2,0) -1.5  ; turning velocity
+    (3,0) -5.0  ; lb steer
+    (4,0) -10  ; lb wheel
+    (5,0) -5.0  ; lf steer
+    (6,0) -10  ; lf wheel
+    (7,0) -5.0  ; rb steer
+    (8,0) -10  ; rb wheel
+    (9,0) -5.0  ; rf steer
+    (10,0) -10  ; rf wheel
+    (11,0) -0.8  ; sh rot
+    (12,0) -0.8  ; sh fle
+    (13,0) -0.8  ; el fle
+    (14,0) -0.8  ; el rot
+    (15,0) -0.8  ; wr fle
+    (16,0) -0.8  ; wr rot
+  }
+
+  upperBound
+  {
+    (0,0) 1.5  ; x velocity
+    (1,0) 1.5  ; y velocity
+    (2,0) 1.5  ; turning velocity
+    (3,0) 5.0  ; lb steer
+    (4,0) 10  ; lb wheel
+    (5,0) 5.0  ; lf steer
+    (6,0) 10  ; lf wheel
+    (7,0) 5.0  ; rb steer
+    (8,0) 10  ; rb wheel
+    (9,0) 5.0  ; rf steer
+    (10,0) 10  ; rf wheel
+    (11,0) 0.8  ; sh rot
+    (12,0) 0.8  ; sh fle
+    (13,0) 0.8  ; el fle
+    (14,0) 0.8  ; el rot
+    (15,0) 0.8  ; wr fle
+    (16,0) 0.8  ; wr rot
+  }
+
+  ; relaxed log barrier mu
+  mu  0.01
+
+  ; relaxed log barrier delta
+  delta  1e-3
+}
+
+jointLimits
+{
+  lowerLimit
+  {
+    (0,0) -3.14  ; lb steer
+    (1,0) -3.14  ; lf steer
+    (2,0) -3.14  ; rb steer
+    (3,0) -3.14  ; rf steer
+    (4,0) -3.2  ; sh rot
+    (5,0) -2.1  ; sh fle
+    (6,0) -2.4  ; el fle
+    (7,0) -3.2  ; el rot
+    (8,0) -1.9  ; wr fle
+    (9,0) -3.2  ; wr rot
+  }
+
+  upperLimit
+  {
+    (0,0) 3.14  ; lb steer
+    (1,0) 3.14  ; lf steer
+    (2,0) 3.14  ; rb steer
+    (3,0) 3.14  ; rf steer
+    (4,0) 3.2  ; sh rot
+    (5,0) 2.1  ; sh fle
+    (6,0) 2.4  ; el fle
+    (7,0) 3.2  ; el rot
+    (8,0) 1.9  ; wr fle
+    (9,0) 3.2  ; wr rot
+  }
+
+  ; relaxed log barrier mu
+  mu  0.01
+
+  ; relaxed log barrier delta
+  delta  1e-3
+}

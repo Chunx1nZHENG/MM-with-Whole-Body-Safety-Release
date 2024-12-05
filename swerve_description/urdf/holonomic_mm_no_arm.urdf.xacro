@@ -1,0 +1,376 @@
+<?xml version="1.0"?>
+
+<robot name="holonomic_base"
+    xmlns:xacro="http://ros.org/wiki/xacro">
+
+    <!-- "" -->
+
+    <link name="base_link">
+    </link>
+
+    <link name="leg_fl">
+        <inertial>
+            <origin xyz="0.0 0.0 -0.041346" rpy="0 0 0" />
+            <mass value="0.1509" />
+            <inertia ixx="8.621E-05" ixy="-2.6953E-09" ixz="-8.1387E-10" iyy="5.4519E-05" iyz="1.5042E-09" izz="6.6419E-05" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://swerve_description/meshes/holonomic/turn_front_left_link.STL" />
+            </geometry>
+            <material name="">
+                <color rgba="0.75294 0.75294 0.75294 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://swerve_description/meshes/holonomic/turn_front_left_link.STL" />
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="left_front_steer_joint" type="revolute">
+        <origin xyz="0.285 0.215 0.1705" rpy="3.1415926 0 3.1415926" />
+        <parent link="base_link" />
+        <child link="leg_fl" />
+        <axis xyz="0 0 1" />
+        <limit effort="20.0" lower="-3.341" upper="3.341" velocity="1.00"/>
+        <safety_controller k_position="100" k_velocity="100" soft_lower_limit="-3.141" soft_upper_limit="3.141" />
+        <joint_properties damping="1.0" friction="5.0"/>
+    </joint>
+    <transmission name="leg_fl_trans">
+        <type>transmission_interface/SimpleTransmission</type>
+        <actuator name="$leg_fl_steering">
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+        <joint name="left_front_steer_joint">
+            <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+        </joint>
+    </transmission>
+
+    <link name="leg_fr">
+        <inertial>
+            <origin xyz="-2.4774E-06 4.2768E-06 -0.041346" rpy="0 0 0" />
+            <mass value="0.1509" />
+            <inertia ixx="8.621E-05" ixy="-2.6953E-09" ixz="8.1387E-10" iyy="5.4519E-05" iyz="-1.5042E-09" izz="6.6419E-05" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://swerve_description/meshes/holonomic/turn_front_right_link.STL" />
+            </geometry>
+            <material name="">
+                <color rgba="0.75294 0.75294 0.75294 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://swerve_description/meshes/holonomic/turn_front_right_link.STL" />
+            </geometry>
+        </collision>
+    </link>
+    <joint name="right_front_steer_joint" type="revolute">
+        <origin xyz="0.285 -0.215 0.1705" rpy="3.14159265358979 0 3.14159265358979" />
+        <!-- <origin xyz="0.585 -0.215 0.1705" rpy="3.14159265358979 0 3.14159265358979" /> -->
+        <parent link="base_link" />
+        <child link="leg_fr" />
+        <axis xyz="0 0 1" />
+        <limit effort="20.0" lower="-3.341" upper="3.341" velocity="1.00"/>
+        <safety_controller k_position="100" k_velocity="100" soft_lower_limit="-3.141" soft_upper_limit="3.141" />
+        <joint_properties damping="1.0" friction="5.0"/>
+    </joint>
+    <transmission name="leg_fr_trans">
+        <type>transmission_interface/SimpleTransmission</type>
+        <actuator name="$leg_fr_steering">
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+        <joint name="right_front_steer_joint">
+            <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+        </joint>
+    </transmission>
+
+    <link name="leg_rl">
+        <inertial>
+            <origin xyz="2.47739936293234E-06 -0.00390427681696906 0.0596537478356015" rpy="0 0 0" />
+            <mass value="0.150899435444674" />
+            <inertia ixx="8.62104557625573E-05" ixy="-2.69534706876987E-09" ixz="-8.13867681148677E-10" iyy="5.45191084176943E-05" iyz="1.50418273401286E-09" izz="6.64192852433824E-05" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://swerve_description/meshes/holonomic/turn_back_left_link.STL" />
+            </geometry>
+            <material name="">
+                <color rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://swerve_description/meshes/holonomic/turn_back_left_link.STL" />
+            </geometry>
+        </collision>
+    </link>
+    <joint name="left_back_steer_joint" type="revolute">
+        <origin xyz="-0.285 0.215 0.1705" rpy="-3.1416 0 0" />
+        <!-- <origin xyz="-0.585 0.215 0.1705" rpy="-3.1416 0 0" /> -->
+        <parent link="base_link" />
+        <child link="leg_rl" />
+        <axis xyz="0 0 1" />
+        <limit effort="20.0" lower="-3.341" upper="3.341" velocity="1.00"/>
+        <safety_controller k_position="100" k_velocity="100" soft_lower_limit="-3.141" soft_upper_limit="3.141" />
+        <joint_properties damping="1.0" friction="5.0"/>
+    </joint>
+    <transmission name="leg_rl_trans">
+        <type>transmission_interface/SimpleTransmission</type>
+        <actuator name="$leg_rl_steering">
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+        <joint name="left_back_steer_joint">
+            <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+        </joint>
+    </transmission>
+
+    <link name="leg_rr">
+        <inertial>
+            <origin xyz="-2.4774E-06 4.2768E-06 -0.041346" rpy="0 0 0" />
+            <mass value="0.1509" />
+            <inertia ixx="8.621E-05" ixy="-2.6953E-09" ixz="8.1387E-10" iyy="5.4519E-05" iyz="-1.5042E-09" izz="6.6419E-05" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://swerve_description/meshes/holonomic/turn_back_right_link.STL" />
+            </geometry>
+            <material name="">
+                <color rgba="0.75294 0.75294 0.75294 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://swerve_description/meshes/holonomic/turn_back_right_link.STL" />
+            </geometry>
+        </collision>
+    </link>
+    <joint name="right_back_steer_joint" type="revolute">
+        <origin xyz="-0.285 -0.215 0.1705" rpy="3.1416 0 0" />
+        <!-- <origin xyz="-0.585 -0.215 0.1705" rpy="3.1416 0 0" /> -->
+        <parent link="base_link" />
+        <child link="leg_rr" />
+        <axis xyz="0 0 1" />
+        <limit effort="20.0" lower="-3.341" upper="3.341" velocity="1.00"/>
+        <safety_controller k_position="100" k_velocity="100" soft_lower_limit="-3.141" soft_upper_limit="3.141" />
+        <joint_properties damping="1.0" friction="5.0"/>
+    </joint>
+    <transmission name="leg_rr_trans">
+        <type>transmission_interface/SimpleTransmission</type>
+        <actuator name="$leg_rr_steering">
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+        <joint name="right_back_steer_joint">
+            <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+        </joint>
+    </transmission>
+
+
+    <link name="wheel_fl">
+        <inertial>
+            <origin xyz="-6.7203E-07 -0.0039185 1.1995E-07" rpy="0 0 0" />
+            <mass value="1.7978" />
+            <inertia ixx="0.0022135" ixy="1.588E-07" ixz="2.5603E-08" iyy="0.003666" iyz="-1.0669E-08" izz="0.0022134" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://swerve_description/meshes/holonomic/wheel_front_left_link.STL" />
+            </geometry>
+            <material name="">
+                <color rgba="1 0.75294 0.75294 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://swerve_description/meshes/holonomic/wheel_front_left_link.STL" />
+            </geometry>
+        </collision>
+    </link>
+    <joint name="left_front_wheel_joint" type="continuous">
+        <origin xyz="0 0.0039 0.101" rpy="-1.5708 1.5708 0" />
+        <parent link="leg_fl" />
+        <child link="wheel_fl" />
+        <axis xyz="0 0 1" />
+        <limit effort="1000" velocity="11.52"/>
+        <safety_controller k_position="100" k_velocity="100"/>
+        <joint_properties damping="1.0" friction="5.0"/>
+    </joint>
+    <transmission name="wheel_fl_trans">
+        <type>transmission_interface/SimpleTransmission</type>
+        <actuator name="wheel_fl_drive">
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+        <joint name="left_front_wheel_joint">
+            <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+        </joint>
+    </transmission>
+    <gazebo reference="wheel_fl">
+        <mu1 value="0.7"/>
+        <mu2 value="0.5"/>
+        <kp value="300000.0" />
+        <kd value="600.0" />
+    </gazebo>
+
+    <link name="wheel_fr">
+        <inertial>
+            <origin xyz="6.7203E-07 0.0039185 1.1995E-07" rpy="0 0 0" />
+            <mass value="1.7978" />
+            <inertia ixx="0.0022135" ixy="1.588E-07" ixz="-2.5603E-08" iyy="0.003666" iyz="1.0669E-08" izz="0.0022134" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://swerve_description/meshes/holonomic/wheel_front_right_link.STL" />
+            </geometry>
+            <material name="">
+                <color rgba="1 0.75294 0.75294 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://swerve_description/meshes/holonomic/wheel_front_right_link.STL" />
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="right_front_wheel_joint" type="continuous">
+        <origin xyz="0 -0.0039 0.101" rpy="1.5707963267949 1.5707963267949 0" />
+        <parent link="leg_fr" />
+        <child link="wheel_fr" />
+        <axis xyz="0 0 1" />
+        <limit effort="1000" velocity="11.52"/>
+        <safety_controller k_position="100" k_velocity="100"/>
+        <joint_properties damping="1.0" friction="5.0"/>
+    </joint>
+    <transmission name="wheel_fr_trans">
+        <type>transmission_interface/SimpleTransmission</type>
+        <actuator name="wheel_fr_drive">
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+        <joint name="right_front_wheel_joint">
+            <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+        </joint>
+    </transmission>
+    <gazebo reference="wheel_fr">
+        <mu1 value="0.7"/>
+        <mu2 value="0.5"/>
+        <kp value="300000.0" />
+        <kd value="600.0" />
+    </gazebo>
+
+    <link name="wheel_rl">
+        <inertial>
+            <origin xyz="-6.7203E-07 -0.0039185 1.1995E-07" rpy="0 0 0" />
+            <mass value="1.7978" />
+            <inertia ixx="0.0022135" ixy="1.588E-07" ixz="2.5603E-08" iyy="0.003666" iyz="-1.0669E-08" izz="0.0022134" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://swerve_description/meshes/holonomic/wheel_back_left_link.STL" />
+            </geometry>
+            <material name="">
+                <color rgba="1 0.75294 0.75294 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://swerve_description/meshes/holonomic/wheel_back_left_link.STL" />
+            </geometry>
+        </collision>
+    </link>
+    <joint name="left_back_wheel_joint" type="continuous">
+        <origin xyz="0 -0.0039 0.101" rpy="1.5708 1.5708 0" />
+        <parent link="leg_rl" />
+        <child link="wheel_rl" />
+        <axis xyz="0 0 1" />
+        <limit effort="1000" velocity="11.52"/>
+        <safety_controller k_position="100" k_velocity="100"/>
+        <joint_properties damping="1.0" friction="5.0"/>
+    </joint>
+    <transmission name="wheel_rl_trans">
+        <type>transmission_interface/SimpleTransmission</type>
+        <actuator name="wheel_rl_drive">
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+        <joint name="left_back_wheel_joint">
+            <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+        </joint>
+    </transmission>
+    <gazebo reference="wheel_rl">
+        <mu1 value="0.7"/>
+        <mu2 value="0.5"/>
+        <kp value="300000.0" />
+        <kd value="600.0" />
+    </gazebo>
+
+
+
+    <link name="wheel_rr">
+        <inertial>
+            <origin xyz="6.7203E-07 0.0039185 1.1995E-07" rpy="0 0 0" />
+            <mass value="1.7978" />
+            <inertia ixx="0.0022135" ixy="1.588E-07" ixz="-2.5603E-08" iyy="0.003666" iyz="1.0669E-08" izz="0.0022134" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://swerve_description/meshes/holonomic/wheel_back_right_link.STL" />
+            </geometry>
+            <material name="">
+                <color rgba="1 0.75294 0.75294 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://swerve_description/meshes/holonomic/wheel_back_right_link.STL" />
+            </geometry>
+        </collision>
+    </link>
+    <joint name="right_back_wheel_joint" type="continuous">
+        <origin xyz="0 0.0039 0.101" rpy="-1.5707963267949 1.5707963267949 0" />
+        <parent link="leg_rr" />
+        <child link="wheel_rr" />
+        <axis xyz="0 0 1" />
+        <limit effort="1000" velocity="11.52"/>
+        <safety_controller k_position="100" k_velocity="100"/>
+        <joint_properties damping="1.0" friction="5.0"/>
+    </joint>
+    <transmission name="wheel_rr_trans">
+        <type>transmission_interface/SimpleTransmission</type>
+        <actuator name="wheel_rr_drive">
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+        <joint name="right_back_wheel_joint">
+            <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+        </joint>
+    </transmission>
+    <gazebo reference="wheel_rr">
+        <mu1 value="0.7"/>
+        <mu2 value="0.5"/>
+        <kp value="300000.0" />
+        <kd value="600.0" />
+    </gazebo>
+
+    <gazebo>
+        <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so"/>
+    </gazebo>
+
+
+</robot>

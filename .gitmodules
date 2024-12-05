@@ -1,0 +1,21 @@
+[submodule "DecompROS"]
+	path = DecompROS
+	url = https://github.com/faumoc/DecompROS.git
+[submodule "jps3d"]
+	path = jps3d
+	url = https://github.com/faumoc/jps3d.git
+[submodule "pinocchio"]
+	path = pinocchio
+	url = https://github.com/leggedrobotics/pinocchio.git
+[submodule "ocs2"]
+	path = ocs2
+	url = https://github.com/leggedrobotics/ocs2.git
+[submodule "manipulation_tools"]
+	path = manipulation_tools
+	url = https://github.com/leggedrobotics/manipulation_tools.git
+[submodule "hpp-fcl"]
+	path = hpp-fcl
+	url = https://github.com/leggedrobotics/hpp-fcl.git
+[submodule "cmake_clang_tools"]
+	path = cmake_clang_tools
+	url = https://github.com/leggedrobotics/cmake_clang_tools.git

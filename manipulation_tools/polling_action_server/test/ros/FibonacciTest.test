@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<launch>
+  <!-- Launch test -->
+  <node pkg="polling_action_server" type="fibonacci_node" name="fibonacci_node"/>
+  <test pkg="polling_action_server" test-name="polling_action_server" type="polling_action_server-test" time-limit="40.0"/>
+</launch>

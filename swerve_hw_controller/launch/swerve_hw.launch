@@ -1,0 +1,16 @@
+<launch>
+    <arg name="ns" default="/swerve_base" />
+
+    <group ns="$(arg ns)">
+        <param name="robot_description" command="$(find xacro)/xacro $(find swerve_description)/urdf/holonomic_mm_arm.urdf.xacro" />
+        <rosparam file="$(find swerve_hw_controller)/config/controller.yaml" command="load"/>
+
+        <node name="swerve_hw" pkg="swerve_hw_controller" type="swerve_hw_controller_node" output="screen" respawn="false"/>
+
+        <node name="load_controller" pkg="controller_manager" type="controller_manager" respawn="false" output="screen" 
+            args="spawn joint_state_controller">
+        </node>
+
+        <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen"/>
+    </group>
+</launch>
