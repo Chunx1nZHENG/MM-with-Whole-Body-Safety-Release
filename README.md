@@ -36,38 +36,30 @@ conventional approaches could falter.
 
 ---
 
-### Cluttered Forest 4X 
+### Cluttered Forest 
 <p align ="center">
-<video width=90% controls >
-  <source src="./readme_doc/task1.mp4" type="video/mp4">
-</video>
+<img src="./readme_doc/task1.gif" width=100%>
 <center >Cluttered forest video</center>
 
 ---
 
-### Multifaceted Task 1X
+### Multifaceted Task 
 <p align ="center">
-<video width=90% controls >
-  <source src="./readme_doc/task2.mp4" type="video/mp4">
-</video>
+<img src="./readme_doc/task2.gif" width=100%>
 <center >Multifaceted taks video</center>
 
 ---
 
-### Real World 4X 
+### Real World  
 <p align ="center">
-<video width=90% controls >
-  <source src="./readme_doc/real_world_4x.mp4" type="video/mp4">
-</video>
+<img src="./readme_doc/real_world.gif" width=100%>
 <center >Real world experiment video</center>
 
 </p>
 
-### Dynamic Obstical 4X
+### Dynamic Obstical 
 <p align ="center">
-<video width=90% controls >
-  <source src="./readme_doc/task3.mp4" type="video/mp4">
-</video>
+<img src="./readme_doc/task3.gif" width=100%>
 <center >Dynamic obstical experiment video</center>
 </p>
 
