@@ -3,6 +3,7 @@
 <img src="./readme_doc/pipeline.png" width=50%>
 </p>
 
+<font size=4>
 Mobile manipulators typically encounter signifi-
 cant challenges in navigating narrow, cluttered environments
 due to their high-dimensional state spaces and complex kine-
@@ -28,40 +29,54 @@ nificant improvements in safety, efficiency, and task completion
 rates. These findings underscore the robustness of the proposed
 method, particularly in narrow, cluttered environments where
 conventional approaches could falter.
+</font>
 
-## Example
-<p align ="center">
-<img src="./readme_doc/exp1.gif" width=75%>
-</p>
-
----
+## Results
 
 ### Cluttered Forest 
+
 <p align ="center">
 <img src="./readme_doc/task1.gif" width=100%>
-<center >Cluttered forest video</center>
+<p align ="center">
+<img src="./readme_doc/exp1.gif" width=100%>
+</p>
+
+<font size=4>
+In the cluttered forest simulation experiment, we aim to demonstrate the robustness and effectiveness of our method. We test it in a 20 m × 10 m × 3 m forest, where obstacles are randomly generated at two different densities: 0.4 obstacles/m2 and 0.7 obstacles/m2. Each obstacle is a 20 cm×20 cm×20 cm block.
+</font>
 
 ---
 
 ### Multifaceted Task 
 <p align ="center">
 <img src="./readme_doc/task2.gif" width=100%>
-<center >Multifaceted taks video</center>
+</p>
+<font size=4>
+In this multifaceted task, we design two common elements: a floating bar and three-layer bookcases. These elements are used to validate the robot’s capabilities in locomotion, manipulation, and collision avoidance. 
+</font>
 
 ---
 
-### Real World  
+### Real-World Experiments  
 <p align ="center">
 <img src="./readme_doc/real_world.gif" width=100%>
-<center >Real world experiment video</center>
-
 </p>
+<font size=4>
+We deploy our controller on a mobile manipulator in a 5 m × 9 m cluttered indoor environment.
+</font>
 
-### Dynamic Obstical 
+</br>
+</br>
+</br>
+</br>
+
 <p align ="center">
 <img src="./readme_doc/task3.gif" width=100%>
-<center >Dynamic obstical experiment video</center>
 </p>
+
+<font size=4>
+We introduce dynamic obstacles to evaluate the system’s capability for dynamic obstacle avoidance. The location of dynamic obstacles is captured by a motion capture system, and a virtual point cloud of obstacle information is generated at those locations and fed into the algorithm to simulate real obstacles.
+</font>
 
 ## Implementation
 Code will be released soon.
