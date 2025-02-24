@@ -1,4 +1,7 @@
 # MM-with-Whole-body-Safety
+
+
+# We have published the whole project in the branch code. Installation and user guide coming soon. Later, we will add acknowledgements for the projects that have been applied by us. 
 <p align ="center">
 <img src="./readme_doc/pipeline.png" width=50%>
 </p>
